@@ -1,5 +1,7 @@
 # SAMOYED
 
+Spotify 新着リリースを巡回 & 通知くん
+
 ## インストール方法
 
 ### required
@@ -34,11 +36,6 @@ DBの立ち上げとFlywayによるマイグレーションが行われる。
 docker compose up -d
 ```
 
-### テーブルの生成
-
-```bash
-```
-
 ### UseCaseの生成
 
 UseCaseのひな形を生成する。
@@ -62,15 +59,6 @@ Daemonのひな形を生成する。
 ```bash
 sbt "codegen/runMain samoyed.codegen.SamoyedCodeGenMain --daemon-name ScheduleArtistAlbumFetch"
 ```
-
-### DBのWriter/Readerの生成
-
-Writer/Readerのひな形を生成する。
-
-```bash
-sbt "codegen/runMain samoyed.codegen.SamoyedCodeGenMain --table-name-for-writer TableName"
-sbt "codegen/runMain samoyed.codegen.SamoyedCodeGenMain --table-name-for-reader TableName"
-``` 
 
 ## 起動方法
 
