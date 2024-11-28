@@ -12,8 +12,6 @@ object SpotifyApiErrorHandler extends Logger {
       case e: TooManyRequestsException =>
         error(e.getMessage, e)
         if (maxRetries > 0) {
-          Task.raiseError(e)
-        } else {
           val retryAfter = e.getRetryAfter
           info(
             "{}, {}",
@@ -21,6 +19,8 @@ object SpotifyApiErrorHandler extends Logger {
             kv("maxRetries", maxRetries)
           )
           retryTooManyRequests(task, maxRetries - 1).delayExecution(retryAfter.seconds)
+        } else {
+          Task.raiseError(e)
         }
       case e =>
         error(e.getMessage, e)
