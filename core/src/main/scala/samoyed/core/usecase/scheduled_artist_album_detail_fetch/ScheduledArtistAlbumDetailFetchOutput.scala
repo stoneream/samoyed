@@ -1,0 +1,3 @@
+package samoyed.core.usecase.scheduled_artist_album_detail_fetch
+
+final case class ScheduledArtistAlbumDetailFetchOutput()

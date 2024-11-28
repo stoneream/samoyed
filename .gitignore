@@ -1,0 +1,10 @@
+target/
+.idea
+.bsp
+.metals
+.vscode
+application.conf
+logs
+.bloop
+metals.sbt
+project/scalikejdbc.properties

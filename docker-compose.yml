@@ -1,0 +1,23 @@
+services:
+  db:
+    image: mariadb:11.0.2
+    env_file: ./docker/dev.env
+    volumes:
+      - samoyed-data:/var/lib/mysql
+    ports:
+      - 127.0.0.1:43306:3306
+  flyway:
+    image: flyway/flyway:10.13-alpine
+    volumes:
+      - ./db/migration:/flyway/sql
+    command: >
+      -url=jdbc:mariadb://db:3306
+      -schemas=dev_samoyed
+      -connectRetries=60
+      -user=root
+      -password=
+      migrate
+    depends_on:
+      - db
+volumes:
+  samoyed-data:
