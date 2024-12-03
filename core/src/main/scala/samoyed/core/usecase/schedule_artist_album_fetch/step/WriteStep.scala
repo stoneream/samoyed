@@ -10,7 +10,7 @@ private[schedule_artist_album_fetch] class WriteStep @Inject() (
     tx: Transaction
 ) {
   private val column = ArtistAlbumFetchSchedule.column
-  
+
   def run(
       rows: List[ArtistAlbumFetchSchedule]
   ) = {

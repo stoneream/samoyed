@@ -7,7 +7,7 @@ import samoyed.core.model.db.Artist
 import scalikejdbc.*
 
 @Singleton
-private [schedule_artist_album_fetch] class FetchArtistStep @Inject() (
+private[schedule_artist_album_fetch] class FetchArtistStep @Inject() (
     tx: Transaction
 ) {
   private val a = Artist.syntax("a")
