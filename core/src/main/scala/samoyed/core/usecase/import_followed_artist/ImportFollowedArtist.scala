@@ -12,11 +12,14 @@ import se.michaelthelin.spotify.SpotifyApi
 import se.michaelthelin.spotify.enums.ModelObjectType
 import se.michaelthelin.spotify.model_objects.specification.Artist as SpotifyArtist
 import monix.execution.Scheduler.Implicits.global
+import samoyed.core.lib.db.Transaction
+
 import scala.annotation.tailrec
 
 @Singleton
 class ImportFollowedArtist @Inject() (
-    spotifyConfig: SpotifyConfig
+    spotifyConfig: SpotifyConfig,
+    tx: Transaction
 ) extends Logger {
   type Input = ImportFollowedArtistInput
   type Output = ImportFollowedArtistOutput
@@ -33,48 +36,52 @@ class ImportFollowedArtist @Inject() (
     val spotifyArtists = fetch(client)
     info(s"Fetched ${spotifyArtists.size} followed artists")
 
-    // すでに登録されているアーティストを除外するため検索
     val a = Artist.syntax("a")
-
-    val spotifyArtistIds = spotifyArtists.map(_.getId)
-    val stored = DB.readOnly { implicit s =>
-      withSQL {
-        select
-          .from(Artist as a)
-          .where
-          .eq(a.deletedAt, None)
-          .and
-          .in(a.spotifyArtistId, spotifyArtistIds)
-      }.map(Artist(a.resultName)).list.apply()
-    }
-
-    // 既存のアーティストを除外
-    val newArtists = spotifyArtists.filterNot { artist =>
-      stored.exists(_.spotifyArtistId == artist.getId)
-    }
-
-    // 新規アーティストを登録
     val column = Artist.column
-    val builder = BatchParamsBuilder {
-      newArtists.map { release =>
-        Seq(
-          column.name -> release.getName,
-          column.spotifyArtistId -> release.getId,
-          column.createdAt -> input.now,
-          column.updatedAt -> input.now
-        )
+
+    for {
+      // すでに登録されているアーティストを除外するため検索
+      stored <- {
+        val spotifyArtistIds = spotifyArtists.map(_.getId)
+        tx.read { implicit s =>
+          withSQL {
+            select
+              .from(Artist as a)
+              .where
+              .eq(a.deletedAt, None)
+              .and
+              .in(a.spotifyArtistId, spotifyArtistIds)
+          }.map(Artist(a.resultName)).list.apply()
+        }
       }
-    }
-
-    DB.localTx { implicit s =>
-      withSQL {
-        insert.into(Artist).namedValues(builder.columnsAndPlaceholders*)
-      }.batch(builder.batchParams*).apply()
-    }
-
-    info(s"Stored ${newArtists.size} artists")
-
-    Task(ImportFollowedArtistOutput())
+      // 既存のアーティストを除外
+      newArtists <- Task {
+        spotifyArtists.filterNot { artist =>
+          stored.exists(_.spotifyArtistId == artist.getId)
+        }
+      }
+      // 新規アーティストを登録
+      builder <- Task {
+        BatchParamsBuilder {
+          newArtists.map { release =>
+            Seq(
+              column.name -> release.getName,
+              column.spotifyArtistId -> release.getId,
+              column.createdAt -> input.now,
+              column.updatedAt -> input.now
+            )
+          }
+        }
+      }
+      _ <- tx.write { implicit s =>
+        withSQL {
+          insert.into(Artist).namedValues(builder.columnsAndPlaceholders*)
+        }.batch(builder.batchParams*).apply()
+      }
+      _ = {
+        info(s"Stored ${newArtists.size} artists")
+      }
+    } yield ImportFollowedArtistOutput()
   }
 
   private def fetch(client: SpotifyApi): List[SpotifyArtist] = {
