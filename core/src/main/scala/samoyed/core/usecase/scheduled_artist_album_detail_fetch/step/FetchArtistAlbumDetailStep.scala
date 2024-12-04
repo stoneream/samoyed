@@ -43,9 +43,9 @@ class FetchArtistAlbumDetailStep @Inject() (
   private def fetch(ids: List[String])(spotifyApi: SpotifyApi): List[Album] = {
     val request = spotifyApi.getSeveralAlbums(ids*).build()
     val value = retryTooManyRequests(Task(request.execute()), 10).runSyncUnsafe()
-    
+
     info("Fetched album details ({})", kv("count", value.size))
-    
+
     value.toList
   }
 
