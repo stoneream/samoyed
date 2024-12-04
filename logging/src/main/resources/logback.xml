@@ -8,6 +8,11 @@
                 %message%n%xException{10}
             </pattern>
         </encoder>
+        <filter class="ch.qos.logback.classic.filter.LevelFilter">
+            <level>INFO</level>
+            <onMatch>ACCEPT</onMatch>
+            <onMismatch>DENY</onMismatch>
+        </filter>
     </appender>
 
     <!--  file  -->
@@ -17,12 +22,13 @@
             <fileNamePattern>${application.home:-.}/logs/application-%d{yyyy-MM-dd}.log</fileNamePattern>
             <maxHistory>30</maxHistory>
         </rollingPolicy>
-
         <encoder class="net.logstash.logback.encoder.LogstashEncoder"/>
+        <filter class="ch.qos.logback.classic.filter.LevelFilter">
+            <level>DEBUG</level>
+            <onMatch>ACCEPT</onMatch>
+            <onMismatch>DENY</onMismatch>
+        </filter>
     </appender>
-
-    <!-- log level -->
-    <logger name="application" level="INFO"/>
 
     <root level="DEBUG">
         <appender-ref ref="STDOUT"/>
