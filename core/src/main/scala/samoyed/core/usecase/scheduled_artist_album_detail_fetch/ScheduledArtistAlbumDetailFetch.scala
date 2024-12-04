@@ -25,12 +25,6 @@ class ScheduledArtistAlbumDetailFetch @Inject() (
     val task = for {
       // 未実行の取得スケジュールを取得 & 開始状態に遷移
       scheduleWithArtistAlbums <- getScheduleStep.run(input.processCount, OffsetDateTime.now())
-      _ = {
-        info(
-          "Fetched schedule ({})",
-          kv("total", scheduleWithArtistAlbums.size)
-        )
-      }
       _ <-
         if (scheduleWithArtistAlbums.isEmpty) {
           Task.unit

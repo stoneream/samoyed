@@ -40,7 +40,7 @@ class SendNotification @Inject() (
       kv("count", records.size)
     }.runAsync {
       case Right(params) =>
-        info("send notification ({})", params)
+        info("sent notification ({})", params)
         SendNotificationOutput()
       case Left(e) => error("failed to send notification", e)
     }

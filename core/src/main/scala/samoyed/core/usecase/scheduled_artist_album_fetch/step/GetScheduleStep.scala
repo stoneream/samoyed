@@ -2,8 +2,10 @@ package samoyed.core.usecase.scheduled_artist_album_fetch.step
 
 import com.google.inject.{Inject, Singleton}
 import monix.eval.Task
+import net.logstash.logback.argument.StructuredArguments.kv
 import samoyed.core.lib.db.Transaction
 import samoyed.core.model.db.{Artist, ArtistAlbumFetchSchedule}
+import samoyed.logging.Logger
 import scalikejdbc.*
 
 import java.time.OffsetDateTime
@@ -11,7 +13,7 @@ import java.time.OffsetDateTime
 @Singleton
 private[scheduled_artist_album_fetch] class GetScheduleStep @Inject() (
     tx: Transaction
-) {
+) extends Logger {
   private val aafs = ArtistAlbumFetchSchedule.syntax("aafs")
   private val a = Artist.syntax("a")
 
@@ -48,6 +50,8 @@ private[scheduled_artist_album_fetch] class GetScheduleStep @Inject() (
         )
         (updatedSchedule, artist)
       }
+
+      info("Found schedules ({})", kv("count", updatedSchedulesWithArtist.size))
 
       // 開始状態に遷移したスケジュールを更新
       val scheduleIds = schedulesWithArtist.map { case (schedule, artist) => schedule.id }

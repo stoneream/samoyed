@@ -3,7 +3,9 @@ package samoyed.core.usecase.schedule_artist_album_fetch
 import com.google.inject.{Inject, Singleton}
 import monix.execution.Cancelable
 import monix.execution.Scheduler.Implicits.traced
+import net.logstash.logback.argument.StructuredArguments.kv
 import samoyed.core.usecase.schedule_artist_album_fetch.step.*
+import samoyed.logging.Logger
 
 import java.time.OffsetDateTime
 
@@ -13,7 +15,7 @@ class ScheduleArtistAlbumFetch @Inject() (
     fetchScheduleStep: FetchScheduleStep,
     buildRowStep: BuildRowStep,
     writeStep: WriteStep
-) {
+) extends Logger {
   type Input = ScheduleArtistAlbumFetchInput
   type Output = ScheduleArtistAlbumFetchOutput
   type Exception = ScheduleArtistAlbumFetchException
@@ -27,7 +29,13 @@ class ScheduleArtistAlbumFetch @Inject() (
       artistAlbumFetchSchedules <- fetchScheduleStep.run(now)
       rows <- buildRowStep.run(artistAlbumFetchSchedules, artists, now)
       _ <- writeStep.run(rows)
-    } yield ScheduleArtistAlbumFetchOutput()
+    } yield {
+      info(
+        "Scheduled artist album fetch ({})",
+        kv("count", rows.size)
+      )
+      ScheduleArtistAlbumFetchOutput()
+    }
 
     task.runAsync {
       case Right(_) => ()
