@@ -84,8 +84,10 @@ oauth2c https://accounts.spotify.com \
 ### バッチ
 
 ```bash
+ACCESS_TOKEN=here
+
 # フォロー中アーティストを巡回対象のアーティストとして取り込む
-sbt "batch/runMain samoyed.batch.SamoyedBatchMain import-followed-artist --access-token access_token"
+sbt "batch/runMain samoyed.batch.SamoyedBatchMain import-followed-artist --access-token $ACCESS_TOKEN"
 ```
 
 ### デーモン

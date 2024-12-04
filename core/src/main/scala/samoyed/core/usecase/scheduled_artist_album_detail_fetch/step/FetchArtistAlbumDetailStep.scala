@@ -3,6 +3,7 @@ package samoyed.core.usecase.scheduled_artist_album_detail_fetch.step
 import com.google.inject.{Inject, Singleton}
 import monix.eval.Task
 import monix.execution.Scheduler.Implicits.global
+import net.logstash.logback.argument.StructuredArguments.kv
 import samoyed.core.lib.spotify.SpotifyApiErrorHandler.retryTooManyRequests
 import samoyed.core.model.config.SpotifyConfig
 import samoyed.core.model.db.{ArtistAlbum, ArtistAlbumDetailFetchSchedule}
@@ -26,9 +27,8 @@ class FetchArtistAlbumDetailStep @Inject() (
     val clientCredentials = spotifyApi.clientCredentials().build().execute()
     spotifyApi.setAccessToken(clientCredentials.getAccessToken)
 
-    val ids = scheduleWithArtistAlbums.map { case (_, artistAlbum) =>
-      artistAlbum.spotifyAlbumId
-    }
+    // 取得するアルバムの詳細のアルバムID
+    val ids = scheduleWithArtistAlbums.map { case (_, artistAlbum) => artistAlbum.spotifyAlbumId }
 
     val albumMap = fetch(ids)(spotifyApi).map { album => (album.getId, album) }.toMap
 
@@ -37,9 +37,15 @@ class FetchArtistAlbumDetailStep @Inject() (
     }
   }
 
+  /**
+   * アルバム詳細を取得
+   */
   private def fetch(ids: List[String])(spotifyApi: SpotifyApi): List[Album] = {
     val request = spotifyApi.getSeveralAlbums(ids*).build()
     val value = retryTooManyRequests(Task(request.execute()), 10).runSyncUnsafe()
+
+    info("Fetched album details ({})", kv("count", value.size))
+
     value.toList
   }
 

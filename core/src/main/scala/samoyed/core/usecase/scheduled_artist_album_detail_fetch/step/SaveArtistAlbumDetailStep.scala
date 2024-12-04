@@ -2,6 +2,7 @@ package samoyed.core.usecase.scheduled_artist_album_detail_fetch.step
 
 import com.google.inject.{Inject, Singleton}
 import monix.eval.Task
+import net.logstash.logback.argument.StructuredArguments.kv
 import samoyed.core.lib.date.DateTimeFormat
 import samoyed.core.lib.db.Transaction
 import samoyed.core.model.db.{ArtistAlbum, ArtistAlbumDetail, ArtistAlbumDetailFetchSchedule}
@@ -20,7 +21,8 @@ private[scheduled_artist_album_detail_fetch] class SaveArtistAlbumDetailStep @In
   private val dtParser = (s: String) => allCatch.either(LocalDate.parse(s, DateTimeFormat.ymd))
 
   def run(ls: List[(ArtistAlbumDetailFetchSchedule, ArtistAlbum, Option[Album])], now: OffsetDateTime): Task[Unit] = {
-    val details = ls.collect { case (schedule, artistAlbum, Some(album)) =>
+    // 取得できたアルバム詳細について行を作成
+    val details = ls.collect { case (_, artistAlbum, Some(album)) =>
       val releasedAt = album.getReleaseDatePrecision match {
         case ReleaseDatePrecision.YEAR => dtParser(s"${album.getReleaseDate}-01-01")
         case ReleaseDatePrecision.MONTH => dtParser(s"${album.getReleaseDate}-01")
@@ -66,6 +68,8 @@ private[scheduled_artist_album_detail_fetch] class SaveArtistAlbumDetailStep @In
       withSQL {
         insertInto(ArtistAlbumDetail).namedValues(builder.columnsAndPlaceholders*)
       }.batch(builder.batchParams*).apply()
+
+      info("Saved artist album details ()", kv("count", details.size))
     }
   }
 }
