@@ -11,3 +11,7 @@ INSERT INTO muted_label (label_name, created_at, updated_at, lock_version) VALUE
 ('hoge', @now, @now, 0),
 ('fuga', @now, @now, 0);
 ```
+
+## 備考
+
+各機能に関していずれは import / export 機能のようなものを用意したいのだが、個人で使用する分にはDB操作で事足りるため、現状はこのような形となっている。
