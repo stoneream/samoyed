@@ -5,7 +5,7 @@ import monix.execution.Cancelable
 import monix.execution.Scheduler.Implicits.traced
 import net.logstash.logback.argument.StructuredArguments.kv
 import samoyed.core.lib.db.Transaction
-import samoyed.core.model.db.{ArtistAlbumDetail, ReleaseNotification}
+import samoyed.core.model.db.{ArtistAlbumDetail, MutedLabel, ReleaseNotification}
 import samoyed.logging.Logger
 import scalikejdbc.*
 
@@ -19,16 +19,19 @@ class CreateNotification @Inject() (
   type Output = CreateNotificationOutput
   type Exception = CreateNotificationException
 
+  private val ml = MutedLabel.syntax("ml")
   private val aad = ArtistAlbumDetail.syntax("aad")
   private val rn = ReleaseNotification.syntax("rn")
-
-  private val mutedLabel = List("X5 Music Group", "UMG Recordings", "UME - Global Clearing House")
 
   def run(input: Input): Cancelable = {
     val now = OffsetDateTime.now
     tx.readForWrite { implicit session =>
-      // 過去7日間にリリースされたアルバムを取得 -> ミュートしているレーベルからのリリースを除外
-      val filteredArtistAlbumDetails = filteredMutedLabel(collectRelease(now, 7), mutedLabel)
+      // 通知を除外しているレーベルを取得
+      val mutedLabel = fetchMutedLabel()
+      // 過去7日間にリリースされたアルバムを取得
+      val latestReleases = collectRelease(now, 7)
+      // ミュートしているレーベルからのリリースを除外
+      val filteredArtistAlbumDetails = filteredMutedLabel(latestReleases, mutedLabel)
       // 取得したアルバムのうち、すでに作成済みの通知を取得
       val releaseNotifications = collectReleaseNotification(filteredArtistAlbumDetails)
       // 未作成の通知情報を抽出
@@ -61,14 +64,25 @@ class CreateNotification @Inject() (
     }.map(ArtistAlbumDetail(aad.resultName)).list.apply()
   }
 
+  private def fetchMutedLabel()(using session: DBSession): List[MutedLabel] = {
+    // 通知を除外しているレーベルを取得
+    withSQL {
+      select
+        .from(MutedLabel as ml)
+        .where
+        .eq(ml.deletedAt, None)
+    }.map(MutedLabel(ml.resultName)).list.apply()
+  }
+
   private def filteredMutedLabel(
       artistAlbumDetails: List[ArtistAlbumDetail],
-      mutedLabels: List[String]
+      mutedLabels: List[MutedLabel]
   ): List[ArtistAlbumDetail] = {
     // ミュートしているレーベルからのリリースを除外
     // 完全一致ではなく文字列を含む場合に除外
+    val mutedLabelNames = mutedLabels.map(_.labelName)
     artistAlbumDetails.filterNot { artistAlbumDetail =>
-      mutedLabels.exists(artistAlbumDetail.label.contains)
+      mutedLabelNames.exists(artistAlbumDetail.label.contains)
     }
   }
 
