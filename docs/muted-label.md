@@ -13,6 +13,7 @@
 ```
 set @now = NOW();
 INSERT INTO muted_label (label_name, created_at, updated_at, lock_version) VALUES
+  ('Sony Music Entertainment Brasil ltda', @now, @now, 0),
   ('X5 Music Group', @now, @now, 0),
   ('UME - Global Clearing House', @now, @now, 0),
   ('MUSIC LAB JPN', @now, @now, 0),
