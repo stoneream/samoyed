@@ -17,5 +17,7 @@ INSERT INTO muted_label (label_name, created_at, updated_at, lock_version) VALUE
   ('X5 Music Group', @now, @now, 0),
   ('UME - Global Clearing House', @now, @now, 0),
   ('MUSIC LAB JPN', @now, @now, 0),
-  ('UMG Recordings', @now, @now, 0);
+  ('UMG Recordings', @now, @now, 0),
+  ('J-POP CHANNEL PROJECT', @now, @now, 0),
+  ('Sony Music Entertainment Brasil ltda', @now, @now, 0);
 ```
