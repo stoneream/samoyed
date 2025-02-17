@@ -80,6 +80,17 @@ lazy val daemon = (project in file("daemon"))
   .dependsOn(core)
   .dependsOn(logging)
 
+lazy val server = (project in file("server"))
+  .enablePlugins(PlayScala)
+  .disablePlugins(PlayLayoutPlugin)
+  .settings(
+    name := "samoyed-server",
+    libraryDependencies ++= Dependencies.server,
+    libraryDependencies += guice
+  )
+  .settings(baseSettings *)
+  .dependsOn(logging)
+
 lazy val logging = (project in file("logging"))
   .settings(
     name := "samoyed-logging",

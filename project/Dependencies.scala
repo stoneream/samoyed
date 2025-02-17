@@ -1,4 +1,4 @@
-import sbt._
+import sbt.*
 
 object Dependencies {
 
@@ -37,10 +37,18 @@ object Dependencies {
     pureConfig
   ).flatten
 
-  lazy val logging: Seq[ModuleID] = Seq(
-    logback,
-    logstashLogbackEncoder
+  lazy val server: Seq[ModuleID] = Seq(
+    scalatags
   ).flatten
+
+  lazy val scalatags: Seq[ModuleID] = Seq(
+    "com.lihaoyi" %% "scalatags" % "0.13.1"
+  )
+
+  lazy val logging: Seq[ModuleID] = Seq(
+    "ch.qos.logback" % "logback-classic" % "1.5.8",
+    "net.logstash.logback" % "logstash-logback-encoder" % "8.0"
+  )
 
   lazy val monix: Seq[ModuleID] = Seq(
     "io.monix" %% "monix" % "3.4.1"
@@ -67,14 +75,6 @@ object Dependencies {
     "club.minnced" % "discord-webhooks" % "0.8.4" excludeAll ExclusionRule("org.slf4j", "jcl-over-slf4j") // 依存がぶつかるので除外
   )
 
-  lazy val logback: Seq[ModuleID] = Seq(
-    "ch.qos.logback" % "logback-classic" % "1.5.8"
-  )
-
-  lazy val logstashLogbackEncoder: Seq[ModuleID] = Seq(
-    "net.logstash.logback" % "logstash-logback-encoder" % "8.0"
-  )
-
   lazy val typesafeConfig: Seq[ModuleID] = Seq(
     "com.typesafe" % "config" % "1.4.3"
   )
@@ -94,6 +94,10 @@ object Dependencies {
 
   lazy val guice: Seq[ModuleID] = Seq(
     "com.google.inject" % "guice" % "7.0.0"
+  )
+
+  lazy val play: Seq[ModuleID] = Seq(
+    "org.scalatestplus.play" %% "scalatestplus-play" % "7.0.1" % Test
   )
 
   // testing
