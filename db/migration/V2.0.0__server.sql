@@ -54,7 +54,7 @@ CREATE TABLE user_spotify_access_token(
   updated_at DATETIME NOT NULL COMMENT '更新日時',
   deleted_at DATETIME COMMENT '削除日時',
   lock_version INT NOT NULL DEFAULT 0 COMMENT 'ロックバージョン'
-)
+) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COMMENT 'Spotifyのユーザーのアクセストークン';
 
 CREATE TABLE user_followed_artists_import_queue(
   id INT AUTO_INCREMENT PRIMARY KEY COMMENT 'ID',
