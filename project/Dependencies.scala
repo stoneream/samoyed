@@ -38,6 +38,7 @@ object Dependencies {
   ).flatten
 
   lazy val server: Seq[ModuleID] = Seq(
+    spotify,
     scalatags
   ).flatten
 
@@ -68,7 +69,7 @@ object Dependencies {
   )
 
   lazy val spotify: Seq[ModuleID] = Seq(
-    "se.michaelthelin.spotify" % "spotify-web-api-java" % "8.4.0"
+    "se.michaelthelin.spotify" % "spotify-web-api-java" % "9.1.1"
   )
 
   lazy val discordWebhooks: Seq[ModuleID] = Seq(

@@ -1,11 +1,14 @@
 package samoyed.logging
 
-import net.logstash.logback.argument.StructuredArgument
+import net.logstash.logback.argument.{StructuredArgument, StructuredArguments}
+import org.slf4j
 import org.slf4j.LoggerFactory
 
 trait Logger {
-  private val logger = LoggerFactory.getLogger(getClass)
+  protected val logger: slf4j.Logger = LoggerFactory.getLogger(getClass)
 
+  protected val kv: (String, Any) => StructuredArgument = StructuredArguments.kv(_: String, _: Any)
+  
   def debug(message: String): Unit = logger.debug(message)
 
   def debug(message: String, structuredArguments: Seq[StructuredArgument]): Unit = logger.debug(message, structuredArguments*)
