@@ -16,5 +16,6 @@ case class ArtistAlbumFetchSchedule(
 )
 
 object ArtistAlbumFetchSchedule extends SQLSyntaxSupport[ArtistAlbumFetchSchedule] {
+  override val tableName = "artist_album_fetch_schedules"
   def apply(rn: ResultName[ArtistAlbumFetchSchedule])(rs: WrappedResultSet): ArtistAlbumFetchSchedule = autoConstruct(rs, rn)
 }

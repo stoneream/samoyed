@@ -14,5 +14,6 @@ case class Artist(
 )
 
 object Artist extends SQLSyntaxSupport[Artist] {
+  override val tableName = "artists"
   def apply(rn: ResultName[Artist])(rs: WrappedResultSet): Artist = autoConstruct(rs, rn)
 }

@@ -1,3 +1,12 @@
+-- rename tables
+ALTER TABLE artist RENAME TO artists;
+ALTER TABLE artist_album RENAME TO artist_albums;
+ALTER TABLE artist_album_detail RENAME TO artist_album_details;
+ALTER TABLE release_notification RENAME TO release_notifications;
+ALTER TABLE artist_album_fetch_schedule RENAME TO artist_album_fetch_schedules;
+ALTER TABLE artist_album_detail_fetch_schedule RENAME TO artist_album_detail_fetch_schedules;
+
+-- create tables
 CREATE TABLE samoyed_users(
   id INT AUTO_INCREMENT PRIMARY KEY COMMENT 'ID',
   spotify_user_id VARCHAR(255) NOT NULL COMMENT 'SpotifyユーザーID',
@@ -69,6 +78,16 @@ CREATE TABLE user_followed_artists(
   deleted_at DATETIME COMMENT '削除日時',
   lock_version INT NOT NULL DEFAULT 0 COMMENT 'ロックバージョン'
 ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COMMENT 'ユーザーがフォローしているアーティスト';
+
+CREATE TABLE user_muted_labels(
+  id INT AUTO_INCREMENT PRIMARY KEY COMMENT 'ID',
+  user_id INT NOT NULL COMMENT 'ユーザーID',
+  label_name VARCHAR(255) NOT NULL COMMENT 'レーベル名',
+  created_at DATETIME NOT NULL COMMENT '作成日時',
+  updated_at DATETIME NOT NULL COMMENT '更新日時',
+  deleted_at DATETIME COMMENT '削除日時',
+  lock_version INT NOT NULL DEFAULT 0 COMMENT 'ロックバージョン'
+) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COMMENT 'ユーザーがミュートしているレーベル';
 
 CREATE TABLE user_release_notification(
   id INT AUTO_INCREMENT PRIMARY KEY COMMENT 'ID',
