@@ -9,7 +9,7 @@ import samoyed.core.model.db.{SamoyedSession, SamoyedUser, SamoyedUserSession}
 import scalikejdbc.DBSession
 
 import java.time.OffsetDateTime
-import javax.inject.{Inject, Singleton}
+import com.google.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton

@@ -15,7 +15,7 @@ import utils.security.TokenGenerator
 import utils.security.TokenGenerator.makeCodeChallenge
 
 import java.time.OffsetDateTime
-import javax.inject.{Inject, Singleton}
+import com.google.inject.{Inject, Singleton}
 
 @Singleton
 class LoginController @Inject() (

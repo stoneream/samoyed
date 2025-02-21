@@ -4,10 +4,10 @@ import scalikejdbc._
 import java.time.OffsetDateTime
 
 case class UserFollowedArtist(
-    id: Int,
-    userId: Int,
-    artistId: Int,
-    userFollowedArtistsImportQueueId: Int,
+    id: Long,
+    userId: Long,
+    artistId: Long,
+    userFollowedArtistsImportQueueId: Long,
     createdAt: OffsetDateTime,
     updatedAt: OffsetDateTime,
     deletedAt: Option[OffsetDateTime],

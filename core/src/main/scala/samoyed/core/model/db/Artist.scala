@@ -5,7 +5,7 @@ import scalikejdbc._
 import java.time.OffsetDateTime
 
 case class Artist(
-    id: Int,
+    id: Long,
     name: String,
     spotifyArtistId: String,
     createdAt: OffsetDateTime,

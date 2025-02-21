@@ -4,8 +4,8 @@ import scalikejdbc._
 import java.time.OffsetDateTime
 
 case class ArtistAlbumFetchSchedule(
-    id: Int,
-    artistId: Int,
+    id: Long,
+    artistId: Long,
     scheduledAt: OffsetDateTime,
     startedAt: Option[OffsetDateTime],
     finishedAt: Option[OffsetDateTime],

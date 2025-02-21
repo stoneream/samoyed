@@ -5,8 +5,8 @@ import scalikejdbc._
 import java.time.OffsetDateTime
 
 case class ArtistAlbum(
-    id: Int,
-    artistId: Int,
+    id: Long,
+    artistId: Long,
     spotifyAlbumId: String,
     createdAt: OffsetDateTime,
     updatedAt: OffsetDateTime,

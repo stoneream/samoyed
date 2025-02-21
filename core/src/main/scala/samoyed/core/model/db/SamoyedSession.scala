@@ -4,7 +4,7 @@ import scalikejdbc._
 import java.time.OffsetDateTime
 
 case class SamoyedSession(
-    id: Int,
+    id: Long,
     clientId: String,
     redirectUri: String,
     responseType: String,

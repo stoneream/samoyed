@@ -4,7 +4,7 @@ import scalikejdbc._
 import java.time.OffsetDateTime
 
 case class SamoyedUser(
-    id: Int,
+    id: Long,
     spotifyUserId: String,
     createdAt: OffsetDateTime,
     updatedAt: OffsetDateTime,

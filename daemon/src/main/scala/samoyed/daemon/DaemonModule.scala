@@ -11,7 +11,7 @@ import samoyed.daemon.handler.scheduled_artist_album_detail_fetch.ScheduledArtis
 import samoyed.daemon.handler.scheduled_artist_album_fetch.ScheduledArtistAlbumFetchConfig
 import samoyed.daemon.handler.send_notification.SendNotificationConfig
 
-object DaemonModule extends AbstractModule {
+class DaemonModule extends AbstractModule {
   private val config = ConfigSource.default
   private def daemonConfig(daemonName: String) = config.at("samoyed.daemon").at(daemonName)
 

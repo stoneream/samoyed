@@ -20,8 +20,8 @@ object SamoyedDaemonMain extends Logger {
 
   def main(args: Array[String]): Unit = {
     val injector = Guice.createInjector(
-      DaemonModule,
-      ConfigModule
+      new DaemonModule(),
+      new ConfigModule()
     )
 
     val parser = {

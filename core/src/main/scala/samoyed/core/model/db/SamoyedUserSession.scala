@@ -4,10 +4,10 @@ import scalikejdbc._
 import java.time.OffsetDateTime
 
 case class SamoyedUserSession(
-    id: Int,
-    userId: Int,
+    id: Long,
+    userId: Long,
     sessionToken: String,
-    expiresIn: Int,
+    expiresIn: Long,
     createdAt: OffsetDateTime,
     updatedAt: OffsetDateTime,
     deletedAt: Option[OffsetDateTime],
@@ -19,5 +19,5 @@ object SamoyedUserSession extends SQLSyntaxSupport[SamoyedUserSession] {
 
   def apply(rn: ResultName[SamoyedUserSession])(rs: WrappedResultSet): SamoyedUserSession = autoConstruct(rs, rn)
 
-  val EXPIRES_IN: Int = 604800 // 1 week
+  val EXPIRES_IN: Long = 604800 // 1 week
 }

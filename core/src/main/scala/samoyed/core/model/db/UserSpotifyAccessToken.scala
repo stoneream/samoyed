@@ -4,8 +4,8 @@ import scalikejdbc._
 import java.time.OffsetDateTime
 
 case class UserSpotifyAccessToken(
-    id: Int,
-    userId: Int,
+    id: Long,
+    userId: Long,
     accessToken: String,
     tokenType: String,
     expiresIn: Int,

@@ -3,7 +3,7 @@ package actions
 import play.api.libs.crypto.CookieSigner
 import samoyed.core.model.db.SamoyedUserSession
 
-import javax.inject.{Inject, Singleton}
+import com.google.inject.{Inject, Singleton}
 
 @Singleton
 class SamoyedUserSessionCookieAccessor @Inject() (
@@ -13,5 +13,5 @@ class SamoyedUserSessionCookieAccessor @Inject() (
   override val cookieSecureOption: Boolean = true
   override val cookieHttpOnlyOption: Boolean = true
   override val cookiePathOption: String = "/"
-  override val cookieMaxAge: Int = SamoyedUserSession.EXPIRES_IN // 1 week
+  override val cookieMaxAge: Int = SamoyedUserSession.EXPIRES_IN.toInt // 1 week
 }

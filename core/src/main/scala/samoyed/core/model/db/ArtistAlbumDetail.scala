@@ -5,8 +5,8 @@ import scalikejdbc.*
 import java.time.{LocalDate, OffsetDateTime}
 
 case class ArtistAlbumDetail(
-    id: Int,
-    artistAlbumId: Int,
+    id: Long,
+    artistAlbumId: Long,
     albumName: String,
     releaseDate: LocalDate,
     releaseDateType: String,

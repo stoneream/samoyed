@@ -47,7 +47,8 @@ lazy val root = (project in file("."))
 lazy val core = (project in file("core"))
   .settings(
     name := "samoyed-core",
-    libraryDependencies ++= Dependencies.core
+    libraryDependencies ++= Dependencies.core,
+    libraryDependencies += guice // PlayのGuiceとバージョンを合わせる
   )
   .settings(baseSettings *)
   .dependsOn(logging)
@@ -64,6 +65,7 @@ lazy val daemon = (project in file("daemon"))
   .settings(
     name := "samoyed-daemon",
     libraryDependencies ++= Dependencies.daemon,
+    libraryDependencies += guice, // PlayのGuiceとバージョンを合わせる
     assembly / mainClass := Some("samoyed.daemon.SamoyedDaemonMain")
   )
   .settings(baseSettings *)
@@ -76,7 +78,13 @@ lazy val server = (project in file("server"))
   .settings(
     name := "samoyed-server",
     libraryDependencies ++= Dependencies.server,
-    libraryDependencies += guice
+    libraryDependencies += guice,
+    dependencyOverrides ++= Seq(
+//      "com.fasterxml.jackson.core" % "jackson-core" % "2.17.1",
+      "com.fasterxml.jackson.core" % "jackson-databind" % "2.17.1",
+//      "com.fasterxml.jackson.core" % "jackson-annotations" % "2.17.1",
+      "com.fasterxml.jackson.module" %% "jackson-module-scala" % "2.17.1"
+    )
   )
   .settings(baseSettings *)
   .dependsOn(core)

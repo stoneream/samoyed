@@ -9,7 +9,7 @@ object SamoyedUserSessionWriter {
     val column = SamoyedUserSession.column
     withSQL {
       insert
-        .into(SamoyedSession)
+        .into(SamoyedUserSession)
         .namedValues(
           column.userId -> samoyedUserSession.userId,
           column.sessionToken -> samoyedUserSession.sessionToken,

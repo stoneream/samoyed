@@ -4,8 +4,8 @@ import scalikejdbc._
 import java.time.OffsetDateTime
 
 case class UserMutedLabels(
-    id: Int,
-    userId: Int,
+    id: Long,
+    userId: Long,
     labelName: String,
     createdAt: OffsetDateTime,
     updatedAt: OffsetDateTime,

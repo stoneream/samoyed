@@ -3,7 +3,7 @@ package actions
 import play.api.libs.crypto.CookieSigner
 import samoyed.core.model.db.SamoyedSession
 
-import javax.inject.{Inject, Singleton}
+import com.google.inject.{Inject, Singleton}
 
 @Singleton
 class SamoyedSessionCookieAccessor @Inject() (

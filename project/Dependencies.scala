@@ -12,7 +12,6 @@ object Dependencies {
     scalatest,
     typesafeConfig,
     pureConfig,
-    guice,
     monix
   ).flatten
 
@@ -24,7 +23,6 @@ object Dependencies {
   lazy val daemon: Seq[ModuleID] = Seq(
     scopt,
     mariadbJavaClient,
-    guice,
     monix,
     typesafeConfig,
     pureConfig
@@ -40,7 +38,7 @@ object Dependencies {
   )
 
   lazy val logging: Seq[ModuleID] = Seq(
-    "ch.qos.logback" % "logback-classic" % "1.5.8",
+    "ch.qos.logback" % "logback-classic" % "1.5.16",
     "net.logstash.logback" % "logstash-logback-encoder" % "8.0"
   )
 
@@ -54,11 +52,11 @@ object Dependencies {
   )
 
   lazy val mariadbJavaClient: Seq[ModuleID] = Seq(
-    "org.mariadb.jdbc" % "mariadb-java-client" % "3.4.1" excludeAll ExclusionRule("org.slf4j", "jcl-over-slf4j") // 依存がぶつかるので除外
+    "org.mariadb.jdbc" % "mariadb-java-client" % "3.5.2"
   )
 
   lazy val hikariCP: Seq[ModuleID] = Seq(
-    "com.zaxxer" % "HikariCP" % "6.0.0"
+    "com.zaxxer" % "HikariCP" % "6.2.1"
   )
 
   lazy val spotify: Seq[ModuleID] = Seq(
