@@ -1,6 +1,5 @@
 import com.google.inject.{Inject, Singleton}
 import controllers.ErrorPage
-import org.apache.pekko.http.scaladsl.model.{StatusCode, StatusCodes}
 import play.api.http.HttpErrorHandler
 import play.api.mvc.{RequestHeader, Result}
 

@@ -2,9 +2,6 @@ package samoyed.core.lib.db
 
 import com.google.inject.{Inject, Singleton}
 import com.zaxxer.hikari.HikariDataSource
-import monix.catnap.Semaphore
-import monix.eval.Task
-import monix.execution.Scheduler.Implicits.traced
 import samoyed.core.model.config.DBsConfig
 import samoyed.logging.Logger
 import scalikejdbc.*
@@ -30,34 +27,19 @@ class Transaction @Inject() (
   ConnectionPool.add(master, masterCp)
   ConnectionPool.singleton(masterCp)
 
-  // データベースのコネクション数以上に同時に処理されないようにする
-  private val semaphore = Semaphore[Task](masterConfig.maximumPoolSize).runSyncUnsafe()
-
   def closeAll(): Unit = {
     masterDs.close()
   }
 
-  final def read[A](f: DBSession => A): Task[A] = {
-    semaphore.withPermit {
-      Task {
-        NamedDB(master).localTx(f)
-      }
-    }
+  final def read[A](f: DBSession => A): A = {
+    NamedDB(master).localTx(f)
   }
 
-  final def write[A](f: DBSession => A): Task[A] = {
-    semaphore.withPermit {
-      Task {
-        NamedDB(master).localTx(f)
-      }
-    }
+  final def write[A](f: DBSession => A): A = {
+    NamedDB(master).localTx(f)
   }
 
-  final def readForWrite[A](f: DBSession => A): Task[A] = {
-    semaphore.withPermit {
-      Task {
-        NamedDB(master).localTx(f)
-      }
-    }
+  final def readForWrite[A](f: DBSession => A): A = {
+    NamedDB(master).localTx(f)
   }
 }

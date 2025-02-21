@@ -5,7 +5,6 @@ import monix.eval.Task
 import monix.execution.Cancelable
 import samoyed.core.usecase.scheduled_artist_album_fetch.step.*
 import monix.execution.Scheduler.Implicits.traced
-import net.logstash.logback.argument.StructuredArguments.kv
 import samoyed.core.model.db.{Artist, ArtistAlbumFetchSchedule}
 import samoyed.logging.Logger
 
@@ -33,14 +32,14 @@ class ScheduledArtistAlbumFetch @Inject() (
     } yield ()
 
     task.runAsync {
-      case Left(e) => error("Failed to fetch artist albums", e)
+      case Left(e) => logger.error("Failed to fetch artist albums", e)
       case Right(_) => // do nothing
     }
   }
 
   private def fetch(scheduleWithArtist: (ArtistAlbumFetchSchedule, Artist)): Task[Unit] = {
     val (schedule, artist) = scheduleWithArtist
-    info(
+    logger.info(
       "Start fetching artist albums ({})",
       kv("artist", artist.name)
     )
@@ -50,7 +49,7 @@ class ScheduledArtistAlbumFetch @Inject() (
       // 新規リリースのみに絞り込む
       artistWithNewAlbums <- filterNewAlbumsStep.run(artistWithAlbums)
       _ = {
-        info(
+        logger.info(
           s"Found new albums ({},{})",
           kv("artist", artistWithNewAlbums._1.name),
           kv("new_albums", artistWithNewAlbums._2.size)

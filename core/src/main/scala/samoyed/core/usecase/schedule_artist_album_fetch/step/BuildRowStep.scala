@@ -2,7 +2,6 @@ package samoyed.core.usecase.schedule_artist_album_fetch.step
 
 import com.google.inject.Singleton
 import monix.eval.Task
-import net.logstash.logback.argument.StructuredArguments.kv
 import samoyed.core.model.db.{Artist, ArtistAlbumFetchSchedule}
 import samoyed.logging.Logger
 
@@ -18,7 +17,7 @@ private[schedule_artist_album_fetch] class BuildRowStep extends Logger {
     val artistsToSchedule = excludeAlreadyScheduledArtists(artistAlbumFetchSchedules, artists)
 
     val excludedArtists = artists.toSet -- artistsToSchedule.toSet
-    info("excluded artists ({})", kv("count", excludedArtists.size))
+    logger.info("excluded artists ({})", kv("count", excludedArtists.size))
 
     artistsToSchedule.map { artist =>
       ArtistAlbumFetchSchedule(

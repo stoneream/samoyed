@@ -2,13 +2,13 @@ package samoyed.core.usecase.schedule_artist_album_fetch.step
 
 import com.google.inject.{Inject, Singleton}
 import monix.eval.Task
-import samoyed.core.lib.db.Transaction
+import samoyed.core.lib.db.TransactionTask
 import samoyed.core.model.db.Artist
 import scalikejdbc.*
 
 @Singleton
 private[schedule_artist_album_fetch] class FetchArtistStep @Inject() (
-    tx: Transaction
+    tx: TransactionTask
 ) {
   private val a = Artist.syntax("a")
 

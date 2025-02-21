@@ -5,8 +5,7 @@ import com.google.inject.{Inject, Singleton}
 import monix.eval.Task
 import monix.execution.Cancelable
 import monix.execution.Scheduler.Implicits.traced
-import net.logstash.logback.argument.StructuredArguments.kv
-import samoyed.core.lib.db.Transaction
+import samoyed.core.lib.db.TransactionTask
 import samoyed.core.lib.util.ErrorHandler.retry
 import samoyed.core.model.config.DiscordConfig
 import samoyed.core.model.db.{Artist, ArtistAlbum, ArtistAlbumDetail, ReleaseNotification}
@@ -17,7 +16,7 @@ import java.time.OffsetDateTime
 
 @Singleton
 class SendNotification @Inject() (
-    tx: Transaction,
+    tx: TransactionTask,
     discordConfig: DiscordConfig
 ) extends Logger {
   type Input = SendNotificationInput
@@ -40,9 +39,9 @@ class SendNotification @Inject() (
       kv("count", records.size)
     }.runAsync {
       case Right(params) =>
-        info("sent notification ({})", params)
+        logger.info("sent notification ({})", params)
         SendNotificationOutput()
-      case Left(e) => error("failed to send notification", e)
+      case Left(e) => logger.error("failed to send notification", e)
     }
   }
 
@@ -100,7 +99,7 @@ class SendNotification @Inject() (
       retry(
         Task {
           webhookClient.send(message).join()
-          info(
+          logger.info(
             "send message ({}, {})",
             kv("current", i + 1),
             kv("total", messages.size)

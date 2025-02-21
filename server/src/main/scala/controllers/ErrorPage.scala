@@ -5,7 +5,7 @@ import play.api.mvc.{RequestHeader, Result, Results}
 import play.twirl.api.Html
 
 @Singleton
-class ErrorPage @Inject()(template: views.Template) extends Results {
+class ErrorPage @Inject() (template: views.Template) extends Results {
 
   def badRequest[A <: RequestHeader](request: A): Result = {
     BadRequest(renderErrorPage("Bad Request"))

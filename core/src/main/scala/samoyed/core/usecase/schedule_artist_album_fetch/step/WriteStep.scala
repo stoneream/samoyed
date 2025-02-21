@@ -1,13 +1,13 @@
 package samoyed.core.usecase.schedule_artist_album_fetch.step
 
 import com.google.inject.{Inject, Singleton}
-import samoyed.core.lib.db.Transaction
+import samoyed.core.lib.db.TransactionTask
 import samoyed.core.model.db.ArtistAlbumFetchSchedule
 import scalikejdbc.*
 
 @Singleton
 private[schedule_artist_album_fetch] class WriteStep @Inject() (
-    tx: Transaction
+    tx: TransactionTask
 ) {
   private val column = ArtistAlbumFetchSchedule.column
 

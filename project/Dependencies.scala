@@ -5,6 +5,7 @@ object Dependencies {
   lazy val core: Seq[ModuleID] = Seq(
     scalikejdbc,
     mariadbJavaClient,
+    sttp,
     hikariCP,
     spotify,
     discordWebhooks,
@@ -18,14 +19,6 @@ object Dependencies {
   lazy val codegen: Seq[ModuleID] = Seq(
     scopt,
     betterFiles
-  ).flatten
-
-  lazy val batch: Seq[ModuleID] = Seq(
-    scalikejdbc,
-    mariadbJavaClient,
-    scopt,
-    monix,
-    typesafeConfig
   ).flatten
 
   lazy val daemon: Seq[ModuleID] = Seq(
@@ -95,6 +88,13 @@ object Dependencies {
 
   lazy val guice: Seq[ModuleID] = Seq(
     "com.google.inject" % "guice" % "7.0.0"
+  )
+
+  lazy val sttp: Seq[ModuleID] = Seq(
+    "com.softwaremill.sttp.client3" %% "core" % "3.10.3",
+    "com.softwaremill.sttp.client3" %% "circe" % "3.10.3",
+    "com.softwaremill.sttp.client3" %% "okhttp-backend" % "3.10.3",
+    "com.squareup.okhttp3" % "okhttp" % "4.12.0"
   )
 
   lazy val play: Seq[ModuleID] = Seq(

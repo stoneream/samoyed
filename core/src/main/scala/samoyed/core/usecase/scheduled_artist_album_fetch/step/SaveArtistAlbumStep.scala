@@ -2,7 +2,7 @@ package samoyed.core.usecase.scheduled_artist_album_fetch.step
 
 import com.google.inject.{Inject, Singleton}
 import monix.eval.Task
-import samoyed.core.lib.db.Transaction
+import samoyed.core.lib.db.TransactionTask
 import samoyed.core.model.db.{Artist, ArtistAlbum}
 import scalikejdbc.*
 import se.michaelthelin.spotify.model_objects.specification.AlbumSimplified
@@ -11,7 +11,7 @@ import java.time.OffsetDateTime
 
 @Singleton
 private[scheduled_artist_album_fetch] class SaveArtistAlbumStep @Inject() (
-    tx: Transaction
+    tx: TransactionTask
 ) {
   def run(artistWithNewAlbums: (Artist, List[AlbumSimplified]), now: OffsetDateTime): Task[Unit] = {
     val (artist, newAlbums) = artistWithNewAlbums

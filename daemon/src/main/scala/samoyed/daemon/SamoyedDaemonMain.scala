@@ -4,7 +4,7 @@ import com.google.inject.Guice
 import monix.eval.Task
 import monix.execution.Scheduler.Implicits.traced
 import samoyed.core.lib.config.ConfigModule
-import samoyed.core.lib.db.Transaction
+import samoyed.core.lib.db.TransactionTask
 import samoyed.daemon.handler.create_notification.CreateNotificationHandler
 import samoyed.daemon.handler.schedule_artist_album_fetch.ScheduleArtistAlbumFetchHandler
 import samoyed.daemon.handler.scheduled_artist_album_detail_fetch.ScheduledArtistAlbumDetailFetchHandler
@@ -36,7 +36,7 @@ object SamoyedDaemonMain extends Logger {
 
     OParser.parse(parser, args, SamoyedDaemonCommandArgs()) match {
       case Some(_) =>
-        info("Starting Samoyed daemon")
+        logger.info("Starting Samoyed daemon")
         try {
           val tasks = Seq(
             injector.getInstance(classOf[ScheduleArtistAlbumFetchHandler]).start(),
@@ -48,12 +48,12 @@ object SamoyedDaemonMain extends Logger {
 
           Await.result(Task.parSequence(tasks).runToFuture, Duration.Inf)
         } finally {
-          val tx = injector.getInstance(classOf[Transaction])
+          val tx = injector.getInstance(classOf[TransactionTask])
           tx.closeAll()
-          info("Database connections closed")
+          logger.info("Database connections closed")
         }
       case None =>
-        error("Failed to parse command line arguments")
+        logger.error("Failed to parse command line arguments")
     }
   }
 }

@@ -2,7 +2,7 @@ package samoyed.core.usecase.schedule_artist_album_fetch.step
 
 import com.google.inject.{Inject, Singleton}
 import monix.eval.Task
-import samoyed.core.lib.db.Transaction
+import samoyed.core.lib.db.TransactionTask
 import samoyed.core.model.db.ArtistAlbumFetchSchedule
 import scalikejdbc.*
 
@@ -10,7 +10,7 @@ import java.time.OffsetDateTime
 
 @Singleton
 private[schedule_artist_album_fetch] class FetchScheduleStep @Inject() (
-    tx: Transaction
+    tx: TransactionTask
 ) {
   private val aafs = ArtistAlbumFetchSchedule.syntax("aafs")
 

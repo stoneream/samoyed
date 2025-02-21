@@ -31,7 +31,7 @@ object GenerateDaemon {
        |    config: ${daemonName}Config
        |) extends AbstractHandler("${daemonName}", config) {
        |  override def execute(): Task[Unit] = Task {
-       |    throw new NotImplementedError("Not implemented")
+       |    throw new NotImplementedlogger.error("Not implemented")
        |  }
        |}
        |

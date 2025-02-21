@@ -3,7 +3,6 @@ package samoyed.core.usecase.scheduled_artist_album_fetch.step
 import com.google.inject.{Inject, Singleton}
 import monix.eval.Task
 import monix.execution.Scheduler.Implicits.global
-import net.logstash.logback.argument.StructuredArguments.kv
 import samoyed.core.lib.spotify.SpotifyApiErrorHandler.retryTooManyRequests
 import samoyed.core.model.config.SpotifyConfig
 import samoyed.core.model.db.Artist
@@ -48,7 +47,7 @@ private[scheduled_artist_album_fetch] class FetchArtistAlbumStep @Inject() (
 
       val items = releases ++ value.getItems.toList
 
-      info(
+      logger.info(
         s"Fetching artist releases ({}, {})",
         kv("artist", artist.name),
         kv("progress", s"${items.size}/${value.getTotal}")

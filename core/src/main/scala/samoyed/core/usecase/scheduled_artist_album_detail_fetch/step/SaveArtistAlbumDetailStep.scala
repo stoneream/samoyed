@@ -2,9 +2,8 @@ package samoyed.core.usecase.scheduled_artist_album_detail_fetch.step
 
 import com.google.inject.{Inject, Singleton}
 import monix.eval.Task
-import net.logstash.logback.argument.StructuredArguments.kv
 import samoyed.core.lib.date.DateTimeFormat
-import samoyed.core.lib.db.Transaction
+import samoyed.core.lib.db.TransactionTask
 import samoyed.core.model.db.{ArtistAlbum, ArtistAlbumDetail, ArtistAlbumDetailFetchSchedule}
 import samoyed.logging.Logger
 import scalikejdbc.*
@@ -16,7 +15,7 @@ import scala.util.control.Exception.allCatch
 
 @Singleton
 private[scheduled_artist_album_detail_fetch] class SaveArtistAlbumDetailStep @Inject() (
-    tx: Transaction
+    tx: TransactionTask
 ) extends Logger {
   private val dtParser = (s: String) => allCatch.either(LocalDate.parse(s, DateTimeFormat.ymd))
 
@@ -32,7 +31,7 @@ private[scheduled_artist_album_detail_fetch] class SaveArtistAlbumDetailStep @In
         // パースに失敗してしまった場合には9999-12-31として扱う
         case Right(dt) => dt
         case Left(e) =>
-          error(s"Failed to parse release date: ${album.getReleaseDate}", e)
+          logger.error(s"Failed to parse release date: ${album.getReleaseDate}", e)
           LocalDate.of(9999, 12, 31)
       }
 
@@ -69,7 +68,7 @@ private[scheduled_artist_album_detail_fetch] class SaveArtistAlbumDetailStep @In
         insertInto(ArtistAlbumDetail).namedValues(builder.columnsAndPlaceholders*)
       }.batch(builder.batchParams*).apply()
 
-      info("Saved artist album details ()", kv("count", details.size))
+      logger.info("Saved artist album details ()", kv("count", details.size))
     }
   }
 }

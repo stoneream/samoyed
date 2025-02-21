@@ -3,8 +3,7 @@ package samoyed.core.usecase.create_notification
 import com.google.inject.{Inject, Singleton}
 import monix.execution.Cancelable
 import monix.execution.Scheduler.Implicits.traced
-import net.logstash.logback.argument.StructuredArguments.kv
-import samoyed.core.lib.db.Transaction
+import samoyed.core.lib.db.TransactionTask
 import samoyed.core.model.db.{ArtistAlbumDetail, MutedLabel, ReleaseNotification}
 import samoyed.logging.Logger
 import scalikejdbc.*
@@ -13,7 +12,7 @@ import java.time.OffsetDateTime
 
 @Singleton
 class CreateNotification @Inject() (
-    tx: Transaction
+    tx: TransactionTask
 ) extends Logger {
   type Input = CreateNotificationInput
   type Output = CreateNotificationOutput
@@ -42,10 +41,10 @@ class CreateNotification @Inject() (
       newArtistAlbumDetails.size
     }.runAsync {
       case Right(count) =>
-        info("created release notification ({})", kv("count", count))
+        logger.info("created release notification ({})", kv("count", count))
         CreateNotificationOutput()
       case Left(e) =>
-        error("failed to create release notification", e)
+        logger.error("failed to create release notification", e)
         throw e
     }
   }

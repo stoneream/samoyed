@@ -42,7 +42,7 @@ lazy val root = (project in file("."))
     name := "samoyed"
   )
   .settings(baseSettings *)
-  .aggregate(core, codegen, batch, daemon, logging)
+  .aggregate(core, codegen, daemon, logging)
 
 lazy val core = (project in file("core"))
   .settings(
@@ -58,16 +58,6 @@ lazy val codegen = (project in file("codegen"))
     libraryDependencies ++= Dependencies.codegen
   )
   .settings(baseSettings *)
-  .dependsOn(logging)
-
-lazy val batch = (project in file("batch"))
-  .settings(
-    name := "samoyed-batch",
-    libraryDependencies ++= Dependencies.batch,
-    assembly / mainClass := Some("samoyed.batch.SamoyedBatchMain")
-  )
-  .settings(baseSettings *)
-  .dependsOn(core)
   .dependsOn(logging)
 
 lazy val daemon = (project in file("daemon"))
@@ -89,6 +79,7 @@ lazy val server = (project in file("server"))
     libraryDependencies += guice
   )
   .settings(baseSettings *)
+  .dependsOn(core)
   .dependsOn(logging)
 
 lazy val logging = (project in file("logging"))

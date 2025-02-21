@@ -2,7 +2,6 @@ package samoyed.core.usecase.import_followed_artist
 
 import com.google.inject.{Inject, Singleton}
 import monix.eval.Task
-import net.logstash.logback.argument.StructuredArguments.kv
 import samoyed.core.lib.spotify.SpotifyApiErrorHandler.retryTooManyRequests
 import samoyed.core.model.config.SpotifyConfig
 import samoyed.core.model.db.Artist
@@ -12,14 +11,14 @@ import se.michaelthelin.spotify.SpotifyApi
 import se.michaelthelin.spotify.enums.ModelObjectType
 import se.michaelthelin.spotify.model_objects.specification.Artist as SpotifyArtist
 import monix.execution.Scheduler.Implicits.global
-import samoyed.core.lib.db.Transaction
+import samoyed.core.lib.db.TransactionTask
 
 import scala.annotation.tailrec
 
 @Singleton
 class ImportFollowedArtist @Inject() (
     spotifyConfig: SpotifyConfig,
-    tx: Transaction
+    tx: TransactionTask
 ) extends Logger {
   type Input = ImportFollowedArtistInput
   type Output = ImportFollowedArtistOutput
@@ -34,7 +33,7 @@ class ImportFollowedArtist @Inject() (
 
     // フォロー中のアーティストを取得
     val spotifyArtists = fetch(client)
-    info(s"Fetched ${spotifyArtists.size} followed artists")
+    logger.info(s"Fetched ${spotifyArtists.size} followed artists")
 
     val a = Artist.syntax("a")
     val column = Artist.column
@@ -79,7 +78,7 @@ class ImportFollowedArtist @Inject() (
         }.batch(builder.batchParams*).apply()
       }
       _ = {
-        info(s"Stored ${newArtists.size} artists")
+        logger.info(s"Stored ${newArtists.size} artists")
       }
     } yield ImportFollowedArtistOutput()
   }
@@ -103,12 +102,12 @@ class ImportFollowedArtist @Inject() (
 
       result.getCursors.toList match {
         case Nil =>
-          warn("Failed get cursor")
+          logger.warn("Failed get cursor")
           artists
         case cursor :: _ =>
           val after = cursor.getAfter
           val items = artists ++ result.getItems
-          info(
+          logger.info(
             s"Fetching followed artists",
             kv("progress", s"${items.size}/${result.getTotal}")
           )
