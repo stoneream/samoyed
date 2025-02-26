@@ -7,10 +7,10 @@ import scalatags.Text.tags2.*
 
 @Singleton
 class Template {
-  def render(template: Tag): Html = {
+  def render(pageTitle: String, template: Tag): Html = {
     val tags = html(
       head(
-        title("Samoyed")
+        title(s"Samoyed - ${pageTitle}")
       ),
       body(template)
     )

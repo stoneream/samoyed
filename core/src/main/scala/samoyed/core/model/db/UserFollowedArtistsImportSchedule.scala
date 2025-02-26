@@ -3,7 +3,7 @@ package samoyed.core.model.db
 import scalikejdbc._
 import java.time.OffsetDateTime
 
-case class UserFollowedArtistsImportSchedules(
+case class UserFollowedArtistsImportSchedule(
     id: Long,
     userId: Long,
     queuedAt: OffsetDateTime,
@@ -15,8 +15,8 @@ case class UserFollowedArtistsImportSchedules(
     lockVersion: Int
 )
 
-object UserFollowedArtistsImportSchedules extends SQLSyntaxSupport[UserFollowedArtistsImportSchedules] {
+object UserFollowedArtistsImportSchedule extends SQLSyntaxSupport[UserFollowedArtistsImportSchedule] {
   override val tableName = "user_followed_artists_import_schedules"
 
-  def apply(rn: ResultName[UserFollowedArtistsImportSchedules])(rs: WrappedResultSet): UserFollowedArtistsImportSchedules = autoConstruct(rs, rn)
+  def apply(rn: ResultName[UserFollowedArtistsImportSchedule])(rs: WrappedResultSet): UserFollowedArtistsImportSchedule = autoConstruct(rs, rn)
 }
