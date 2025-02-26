@@ -5,7 +5,7 @@ import scalikejdbc.*
 
 import java.time.OffsetDateTime
 
-object UserFollowedArtistsImportSchedulesWriter {
+object UserFollowedArtistsImportScheduleWriter {
   def write(row: UserFollowedArtistsImportSchedule)(using DBSession): Unit = {
     val column = UserFollowedArtistsImportSchedule.column
 
@@ -25,7 +25,7 @@ object UserFollowedArtistsImportSchedulesWriter {
     }.update.apply()
   }
 
-  def queue(userId: String, now: OffsetDateTime)(using DBSession): Unit = {
+  def queue(userId: Long, now: OffsetDateTime)(using DBSession): Unit = {
     val column = UserFollowedArtistsImportSchedule.column
 
     withSQL {
