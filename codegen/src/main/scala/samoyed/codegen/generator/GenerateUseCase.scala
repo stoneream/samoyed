@@ -35,7 +35,7 @@ object GenerateUseCase {
                      |  type Exception = ${useCaseName}Exception
                      |
                      |
-                     |  def run(input: Input) = throw new NotImplementedlogger.error("Not implemented")
+                     |  def run(input: Input) = throw new NotImplementedError("Not implemented")
                      |}
                      |
                      |""".stripMargin

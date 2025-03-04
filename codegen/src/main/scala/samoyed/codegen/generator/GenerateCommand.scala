@@ -27,7 +27,7 @@ object GenerateCommand {
        |
        |@Singleton
        |class ${commandName}CommandHandler @Inject()() extends Logger {
-       |  def run(args: ${commandName}CommandArgs) = throw new NotImplementedlogger.error("Not implemented")
+       |  def run(args: ${commandName}CommandArgs) = throw new NotImplementedError("Not implemented")
        |}
        |
        |object ${commandName}CommandHandler {

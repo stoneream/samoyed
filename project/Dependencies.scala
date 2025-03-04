@@ -30,7 +30,8 @@ object Dependencies {
 
   lazy val server: Seq[ModuleID] = Seq(
     spotify,
-    scalatags
+    scalatags,
+    circe
   ).flatten
 
   lazy val scalatags: Seq[ModuleID] = Seq(
@@ -88,6 +89,12 @@ object Dependencies {
     "com.google.inject" % "guice" % "7.0.0"
   )
 
+  lazy val circe: Seq[ModuleID] = Seq(
+    "io.circe" %% "circe-core" % "0.14.10",
+    "io.circe" %% "circe-generic" % "0.14.10",
+    "io.circe" %% "circe-parser" % "0.14.10",
+    "io.circe" %% "circe-optics" % "0.15.0"
+  )
   lazy val sttp: Seq[ModuleID] = Seq(
     "com.softwaremill.sttp.client3" %% "core" % "3.10.3",
     "com.softwaremill.sttp.client3" %% "circe" % "3.10.3",
