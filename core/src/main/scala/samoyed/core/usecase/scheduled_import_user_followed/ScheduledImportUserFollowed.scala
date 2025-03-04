@@ -10,9 +10,14 @@ class ScheduledImportUserFollowed @Inject() (
   type Exception = ScheduledImportUserFollowedException
 
   def run(input: Input) = {
-    // スケジュール中の取り込みキューを取得
 
-    // 取り込み処理
+    // 未開始の取り込みスケジュールを1件取得、開始状態に遷移させる
+
+    // 対象ユーザーの最新のアクセストークンを取得する
+
+    // フォロー中のアーティストを取得する
+
+    // レコードを作成
 
     ???
   }

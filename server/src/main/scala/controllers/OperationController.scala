@@ -23,6 +23,8 @@ class OperationController @Inject() (
 ) extends AbstractController(cc) {
   // フォロー中アーティストの取り込みキューイング
   def importFollowingQueue(): Action[AnyContent] = sessionAction.samoyedUserSession { sessionRequest =>
+    // TODO 取り込み履歴・状況を表示する
+
     val messagesOpt = sessionRequest.flash.get(Messages.SESSION_KEY).flatMap(Messages.fromJson(_).toOption)
     val csrf = CSRF.getToken(sessionRequest)
 
