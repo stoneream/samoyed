@@ -10,6 +10,8 @@ import scalikejdbc.DBSession
 
 import java.time.OffsetDateTime
 import com.google.inject.{Inject, Singleton}
+import samoyed.logging.Logger
+
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
@@ -18,7 +20,8 @@ class SamoyedSessionAction @Inject() (
     samoyedUserSessionCookieAccessor: SamoyedUserSessionCookieAccessor,
     transaction: Transaction,
     parser: BodyParsers.Default
-)(using ExecutionContext) {
+)(using ExecutionContext)
+    extends Logger {
 
   val samoyedSession: SessionActionBuilder = new SessionActionBuilder(parser)
 
@@ -42,16 +45,19 @@ class SamoyedSessionAction @Inject() (
 
               if (now.isAfter(expiredAt)) {
                 // セッションが期限切れの場合は、セッションを削除してログインにリダイレクト
+                logger.info("セッションの有効期限が切れています。", kv("samoyed_session_id", samoyedSession.id))
                 Future.apply(samoyedSessionCookieAccessor.delete(Redirect("/login")))
               } else {
                 block(SessionRequest(samoyedSession = samoyedSession, request = request))
               }
             case None =>
               // セッションが存在しない場合は、セッションを削除してログインにリダイレクト
+              logger.info("セッションが存在しません。")
               Future.apply(samoyedSessionCookieAccessor.delete(Redirect("/login")))
           }
         case None =>
           // セッションが存在しない・不正な場合は、セッションを削除してログインにリダイレクト
+          logger.info("セッションが存在しないか不正です。")
           Future.apply(samoyedSessionCookieAccessor.delete(Redirect("/login")))
       }
     }
@@ -75,16 +81,19 @@ class SamoyedSessionAction @Inject() (
 
               if (now.isAfter(expiredAt)) {
                 // セッションが期限切れの場合は、セッションを削除してログインにリダイレクト
+                logger.info("セッションの有効期限が切れています。", kv("samoyed_user_session_id", samoyedUserSession.id))
                 Future.apply(samoyedUserSessionCookieAccessor.delete(Redirect("/login")))
               } else {
                 block(UserSessionRequest(samoyedUserSession = samoyedUserSession, user = samoyedUser, request = request))
               }
             case None =>
               // セッションが存在しない場合は、セッションを削除してログインにリダイレクト
+              logger.info("セッションが存在しません。")
               Future.apply(samoyedUserSessionCookieAccessor.delete(Redirect("/login")))
           }
         case None =>
           // セッションが存在しない・不正な場合は、セッションを削除してログインにリダイレクト
+          logger.info("セッションが存在しないか不正です。")
           Future.apply(samoyedSessionCookieAccessor.delete(Redirect("/login")))
       }
     }

@@ -14,10 +14,15 @@ class MyPageController @Inject() (
 ) extends AbstractController(cc) {
 
   def index(): Action[AnyContent] = sessionAction.samoyedUserSession { sessionRequest =>
+    val userId = sessionRequest.user.spotifyUserId
     Ok(
       template.render(
         "My Page",
-        views.mypage.Index.template()
+        views.mypage.Index.template(
+          views.mypage.Index.Props(
+            spotifyUserId = userId
+          )
+        )
       )
     )
   }

@@ -1,2 +1,4 @@
 GET /login controllers.LoginController.index()
 GET /login/callback controllers.LoginController.callback()
+
+GET /mypage controllers.MyPageController.index()

@@ -3,8 +3,9 @@ package actions
 import actions.AbstractSessionCookieAccessor.Verified
 import play.api.libs.crypto.CookieSigner
 import play.api.mvc.{Cookie, DiscardingCookie, RequestHeader, Result}
+import samoyed.logging.Logger
 
-abstract class AbstractSessionCookieAccessor(val signer: CookieSigner) {
+abstract class AbstractSessionCookieAccessor(val signer: CookieSigner) extends Logger {
 
   val cookieName: String
   val cookieSecureOption: Boolean
@@ -40,6 +41,7 @@ abstract class AbstractSessionCookieAccessor(val signer: CookieSigner) {
         if (hmac == signer.sign(value)) {
           Some(Verified(value))
         } else {
+          logger.info("セッショントークンのHMACが一致しません。")
           None
         }
       case _ => None

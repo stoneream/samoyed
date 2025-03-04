@@ -1,6 +1,6 @@
 package controllers
 
-import actions.{SamoyedSessionAction, SamoyedSessionCookieAccessor}
+import actions.{SamoyedSessionAction, SamoyedSessionCookieAccessor, SamoyedUserSessionCookieAccessor}
 import play.api.mvc.{AbstractController, Action, AnyContent, ControllerComponents}
 import samoyed.core.lib.db.reader.UserReader
 import samoyed.core.lib.db.Transaction
@@ -25,6 +25,7 @@ class LoginController @Inject() (
     transaction: Transaction,
     sessionAction: SamoyedSessionAction,
     sessionCookieAccessor: SamoyedSessionCookieAccessor,
+    samoyedUserSessionCookieAccessor: SamoyedUserSessionCookieAccessor,
     spotifyOAuth: SpotifyOAuth
 ) extends AbstractController(cc)
     with Logger {
@@ -184,7 +185,7 @@ class LoginController @Inject() (
               SamoyedUserSessionWriter.write(userSession)
             }
             // ユーザーセッショントークンをCookieに保存
-            sessionCookieAccessor.put(userSession.sessionToken)(Redirect("/"))
+            samoyedUserSessionCookieAccessor.put(userSession.sessionToken)(Redirect("/"))
         }
       }
     }

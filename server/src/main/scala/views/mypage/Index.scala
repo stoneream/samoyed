@@ -4,9 +4,15 @@ import scalatags.Text.short.*
 import scalatags.Text.tags2.*
 
 object Index {
-  def template(): Tag = {
+  case class Props(
+      spotifyUserId: String
+  )
+  def template(
+      props: Props
+  ): Tag = {
     div(
-      h1("My Page")
+      h1("My Page"),
+      p("Logged in as: ", props.spotifyUserId)
     )
   }
 }
