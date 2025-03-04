@@ -11,9 +11,9 @@ class ScheduledImportUserFollowed @Inject() (
 
   def run(input: Input) = {
     // スケジュール中の取り込みキューを取得
-    
+
     // 取り込み処理
-    
+
     ???
   }
 }

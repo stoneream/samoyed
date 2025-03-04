@@ -11,14 +11,14 @@ import se.michaelthelin.spotify.SpotifyApi
 import se.michaelthelin.spotify.enums.ModelObjectType
 import se.michaelthelin.spotify.model_objects.specification.Artist as SpotifyArtist
 import monix.execution.Scheduler.Implicits.global
-import samoyed.core.lib.db.TransactionTask
+import samoyed.core.lib.db.Transaction
 
 import scala.annotation.tailrec
 
 @Singleton
 class ImportFollowedArtist @Inject() (
     spotifyConfig: SpotifyConfig,
-    tx: TransactionTask
+    tx: Transaction
 ) extends Logger {
   type Input = ImportFollowedArtistInput
   type Output = ImportFollowedArtistOutput
@@ -39,22 +39,23 @@ class ImportFollowedArtist @Inject() (
     val column = Artist.column
 
     for {
-      // すでに登録されているアーティストを除外するため検索
-      stored <- {
-        val spotifyArtistIds = spotifyArtists.map(_.getId)
-        tx.read { implicit s =>
-          withSQL {
-            select
-              .from(Artist as a)
-              .where
-              .eq(a.deletedAt, None)
-              .and
-              .in(a.spotifyArtistId, spotifyArtistIds)
-          }.map(Artist(a.resultName)).list.apply()
-        }
-      }
       // 既存のアーティストを除外
       newArtists <- Task {
+        // すでに登録されているアーティストを除外するため検索
+        val stored = {
+          val spotifyArtistIds = spotifyArtists.map(_.getId)
+          tx.read { implicit s =>
+            withSQL {
+              select
+                .from(Artist as a)
+                .where
+                .eq(a.deletedAt, None)
+                .and
+                .in(a.spotifyArtistId, spotifyArtistIds)
+            }.map(Artist(a.resultName)).list.apply()
+          }
+        }
+
         spotifyArtists.filterNot { artist =>
           stored.exists(_.spotifyArtistId == artist.getId)
         }
@@ -72,10 +73,12 @@ class ImportFollowedArtist @Inject() (
           }
         }
       }
-      _ <- tx.write { implicit s =>
-        withSQL {
-          insert.into(Artist).namedValues(builder.columnsAndPlaceholders*)
-        }.batch(builder.batchParams*).apply()
+      _ <- Task {
+        tx.write { implicit s =>
+          withSQL {
+            insert.into(Artist).namedValues(builder.columnsAndPlaceholders*)
+          }.batch(builder.batchParams*).apply()
+        }
       }
       _ = {
         logger.info(s"Stored ${newArtists.size} artists")

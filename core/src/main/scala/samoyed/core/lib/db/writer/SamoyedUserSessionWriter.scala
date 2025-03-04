@@ -1,6 +1,6 @@
 package samoyed.core.lib.db.writer
 
-import samoyed.core.model.db.{SamoyedSession, SamoyedUserSession}
+import samoyed.core.model.db.SamoyedUserSession
 import scalikejdbc.*
 
 object SamoyedUserSessionWriter {

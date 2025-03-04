@@ -2,14 +2,14 @@ package samoyed.core.usecase.scheduled_artist_album_fetch.step
 
 import com.google.inject.{Inject, Singleton}
 import monix.eval.Task
-import samoyed.core.lib.db.TransactionTask
+import samoyed.core.lib.db.Transaction
 import samoyed.core.model.db.{Artist, ArtistAlbum}
 import scalikejdbc.*
 import se.michaelthelin.spotify.model_objects.specification.AlbumSimplified
 
 @Singleton
 private[scheduled_artist_album_fetch] class FilterNewAlbumsStep @Inject() (
-    tx: TransactionTask
+    tx: Transaction
 ) {
   private val aa = ArtistAlbum.syntax("aa")
 
@@ -27,7 +27,7 @@ private[scheduled_artist_album_fetch] class FilterNewAlbumsStep @Inject() (
     } yield (artist, newAlbums)
   }
 
-  private def getRegisteredAlbums(artist: Artist): Task[List[ArtistAlbum]] = {
+  private def getRegisteredAlbums(artist: Artist): Task[List[ArtistAlbum]] = Task {
     tx.read { implicit session =>
       withSQL {
         select

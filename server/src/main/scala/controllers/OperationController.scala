@@ -9,6 +9,7 @@ import scalikejdbc.DBSession
 import view_utils.Messages
 import view_utils.Messages.MessageType
 import views.Template
+import views.html.helper.CSRF
 
 import java.time.OffsetDateTime
 import javax.inject.{Inject, Singleton}
@@ -22,30 +23,32 @@ class OperationController @Inject() (
 ) extends AbstractController(cc) {
   // フォロー中アーティストの取り込みキューイング
   def importFollowingQueue(): Action[AnyContent] = sessionAction.samoyedUserSession { sessionRequest =>
-    val messages = sessionRequest.session.get(Messages.SESSION_KEY).flatMap(Messages.fromJson(_).toOption)
+    val messagesOpt = sessionRequest.flash.get(Messages.SESSION_KEY).flatMap(Messages.fromJson(_).toOption)
+    val csrf = CSRF.getToken(sessionRequest)
 
-    // 現在進行中の取り込みがあるか？
-    val progress = transaction.read { session =>
-      given DBSession = session
-      UserFollowedArtistsImportScheduleReader.findProgressByUserId(sessionRequest.user.id)
-    }
-    val hasProgress = progress.isDefined
-
-
-
-    ???
+    Ok(
+      template.render(
+        "フォロー中アーティストのインポート",
+        views.operation.import_following_queue.Index.template(
+          views.operation.import_following_queue.Index.Props(
+            csrfToken = csrf.value,
+            messagesOpt = messagesOpt
+          )
+        )
+      )
+    )
   }
   def postImportFollowingQueue(): Action[AnyContent] = sessionAction.samoyedUserSession { sessionRequest =>
-    // 現在進行中の取り込みがあるか？
+    // 現在、進行中もしくは開始前のキューが存在するか
     val progress = transaction.read { session =>
       given DBSession = session
-      UserFollowedArtistsImportScheduleReader.findProgressByUserId(sessionRequest.user.id)
+      UserFollowedArtistsImportScheduleReader.findProgressOrQueueByUserId(sessionRequest.user.id)
     }
-    if (progress.isDefined) {
-      // 進行中のものが存在する場合はエラー
+    if (progress.nonEmpty) {
+      // 存在する場合はエラーとする
       val messages = Messages().add(MessageType.ERROR, "現在進行中の取り込み処理が存在します。")
       Redirect("/operation/import-following-queue")
-        .withSession(
+        .flashing(
           Messages.SESSION_KEY -> messages.toJson
         )
     } else {
@@ -56,7 +59,7 @@ class OperationController @Inject() (
       }
       val messages = Messages().add(MessageType.INFO, "取り込みをキューイングしました。")
       Redirect("/operation/import-following-queue")
-        .withSession(
+        .flashing(
           Messages.SESSION_KEY -> messages.toJson
         )
     }

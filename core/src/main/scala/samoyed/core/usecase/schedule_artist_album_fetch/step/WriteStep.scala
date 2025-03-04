@@ -1,19 +1,20 @@
 package samoyed.core.usecase.schedule_artist_album_fetch.step
 
 import com.google.inject.{Inject, Singleton}
-import samoyed.core.lib.db.TransactionTask
+import monix.eval.Task
+import samoyed.core.lib.db.Transaction
 import samoyed.core.model.db.ArtistAlbumFetchSchedule
 import scalikejdbc.*
 
 @Singleton
 private[schedule_artist_album_fetch] class WriteStep @Inject() (
-    tx: TransactionTask
+    tx: Transaction
 ) {
   private val column = ArtistAlbumFetchSchedule.column
 
   def run(
       rows: List[ArtistAlbumFetchSchedule]
-  ) = {
+  ) = Task {
     tx.write { implicit session =>
       val builder = BatchParamsBuilder {
         rows.map { row =>

@@ -1,6 +1,6 @@
 package samoyed.core.lib.db.reader
 
-import samoyed.core.model.db.{SamoyedSession, SamoyedUser, SamoyedUserSession}
+import samoyed.core.model.db.{SamoyedUser, SamoyedUserSession}
 import scalikejdbc.*
 
 object SamoyedUserSessionReader {

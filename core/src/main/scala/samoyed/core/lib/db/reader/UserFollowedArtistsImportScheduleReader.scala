@@ -1,11 +1,11 @@
 package samoyed.core.lib.db.reader
 
-import samoyed.core.model.db.{SamoyedUser, UserFollowedArtistsImportSchedule}
+import samoyed.core.model.db.UserFollowedArtistsImportSchedule
 import scalikejdbc.*
 
 object UserFollowedArtistsImportScheduleReader {
 
-  def findProgressByUserId(userId: Long)(using DBSession): Option[UserFollowedArtistsImportSchedule] = {
+  def findProgressOrQueueByUserId(userId: Long)(using DBSession): List[UserFollowedArtistsImportSchedule] = {
     val ufas = UserFollowedArtistsImportSchedule.syntax("ufas")
     withSQL {
       selectFrom(UserFollowedArtistsImportSchedule as ufas).where
@@ -13,10 +13,8 @@ object UserFollowedArtistsImportScheduleReader {
         .and
         .isNull(ufas.deletedAt)
         .and
-        .isNotNull(ufas.startedAt)
-        .and
         .isNull(ufas.finishedAt)
-    }.map(UserFollowedArtistsImportSchedule(ufas.resultName)).single.apply()
+    }.map(UserFollowedArtistsImportSchedule(ufas.resultName)).list.apply()
   }
 
 }

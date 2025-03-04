@@ -5,11 +5,9 @@ import pureconfig.*
 import pureconfig.generic.ProductHint
 import pureconfig.generic.scala3.HintsAwareConfigReaderDerivation.deriveReader
 import pureconfig.generic.semiauto.*
-import samoyed.daemon.handler.create_notification.CreateNotificationConfig
 import samoyed.daemon.handler.schedule_artist_album_fetch.ScheduleArtistAlbumFetchConfig
 import samoyed.daemon.handler.scheduled_artist_album_detail_fetch.ScheduledArtistAlbumDetailFetchConfig
 import samoyed.daemon.handler.scheduled_artist_album_fetch.ScheduledArtistAlbumFetchConfig
-import samoyed.daemon.handler.send_notification.SendNotificationConfig
 
 class DaemonModule extends AbstractModule {
   private val config = ConfigSource.default
@@ -36,20 +34,6 @@ class DaemonModule extends AbstractModule {
   def provideScheduledArtistAlbumFetchConfig: ScheduledArtistAlbumFetchConfig = {
     given ConfigReader[ScheduledArtistAlbumFetchConfig] = deriveReader
     daemonConfig("scheduledArtistAlbumFetch").loadOrThrow[ScheduledArtistAlbumFetchConfig]
-  }
-
-  @Provides
-  @Singleton
-  def provideCreateNotificationConfig: CreateNotificationConfig = {
-    given ConfigReader[CreateNotificationConfig] = deriveReader
-    daemonConfig("createNotification").loadOrThrow[CreateNotificationConfig]
-  }
-
-  @Provides
-  @Singleton
-  def provideSendNotificationConfig: SendNotificationConfig = {
-    given ConfigReader[SendNotificationConfig] = deriveReader
-    daemonConfig("sendNotification").loadOrThrow[SendNotificationConfig]
   }
 
 }

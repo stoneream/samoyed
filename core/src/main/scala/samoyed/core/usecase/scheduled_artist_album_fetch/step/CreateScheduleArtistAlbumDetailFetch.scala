@@ -2,7 +2,7 @@ package samoyed.core.usecase.scheduled_artist_album_fetch.step
 
 import com.google.inject.{Inject, Singleton}
 import monix.eval.Task
-import samoyed.core.lib.db.TransactionTask
+import samoyed.core.lib.db.Transaction
 import samoyed.core.model.db.{Artist, ArtistAlbum, ArtistAlbumDetailFetchSchedule}
 import scalikejdbc.*
 import se.michaelthelin.spotify.model_objects.specification.AlbumSimplified
@@ -11,7 +11,7 @@ import java.time.OffsetDateTime
 
 @Singleton
 private[scheduled_artist_album_fetch] class CreateScheduleArtistAlbumDetailFetch @Inject() (
-    tx: TransactionTask
+    tx: Transaction
 ) {
   private val aa = ArtistAlbum.syntax("aa")
 
@@ -25,7 +25,7 @@ private[scheduled_artist_album_fetch] class CreateScheduleArtistAlbumDetailFetch
     } yield ()
   }
 
-  private def getNewArtistAlbum(newAlbums: List[AlbumSimplified]): Task[List[ArtistAlbum]] = {
+  private def getNewArtistAlbum(newAlbums: List[AlbumSimplified]): Task[List[ArtistAlbum]] = Task {
     tx.read { implicit session =>
       withSQL {
         select
@@ -54,7 +54,7 @@ private[scheduled_artist_album_fetch] class CreateScheduleArtistAlbumDetailFetch
     }
   }
 
-  private def insertAlbums(albums: List[ArtistAlbumDetailFetchSchedule]): Task[Unit] = {
+  private def insertAlbums(albums: List[ArtistAlbumDetailFetchSchedule]): Task[Unit] = Task {
     tx.write { implicit session =>
       val column = ArtistAlbumDetailFetchSchedule.column
       val builder = BatchParamsBuilder {

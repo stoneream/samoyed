@@ -4,12 +4,10 @@ import com.google.inject.Guice
 import monix.eval.Task
 import monix.execution.Scheduler.Implicits.traced
 import samoyed.core.lib.config.ConfigModule
-import samoyed.core.lib.db.TransactionTask
-import samoyed.daemon.handler.create_notification.CreateNotificationHandler
+import samoyed.core.lib.db.Transaction
 import samoyed.daemon.handler.schedule_artist_album_fetch.ScheduleArtistAlbumFetchHandler
 import samoyed.daemon.handler.scheduled_artist_album_detail_fetch.ScheduledArtistAlbumDetailFetchHandler
 import samoyed.daemon.handler.scheduled_artist_album_fetch.ScheduledArtistAlbumFetchHandler
-import samoyed.daemon.handler.send_notification.SendNotificationHandler
 import samoyed.logging.Logger
 import scopt.OParser
 
@@ -41,14 +39,12 @@ object SamoyedDaemonMain extends Logger {
           val tasks = Seq(
             injector.getInstance(classOf[ScheduleArtistAlbumFetchHandler]).start(),
             injector.getInstance(classOf[ScheduledArtistAlbumFetchHandler]).start(),
-            injector.getInstance(classOf[ScheduledArtistAlbumDetailFetchHandler]).start(),
-            injector.getInstance(classOf[CreateNotificationHandler]).start(),
-            injector.getInstance(classOf[SendNotificationHandler]).start()
+            injector.getInstance(classOf[ScheduledArtistAlbumDetailFetchHandler]).start()
           )
 
           Await.result(Task.parSequence(tasks).runToFuture, Duration.Inf)
         } finally {
-          val tx = injector.getInstance(classOf[TransactionTask])
+          val tx = injector.getInstance(classOf[Transaction])
           tx.closeAll()
           logger.info("Database connections closed")
         }

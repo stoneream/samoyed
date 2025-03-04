@@ -2,3 +2,6 @@ GET /login controllers.LoginController.index()
 GET /login/callback controllers.LoginController.callback()
 
 GET /mypage controllers.MyPageController.index()
+
+GET /operation/import-following-queue controllers.OperationController.importFollowingQueue()
+POST /operation/import-following-queue controllers.OperationController.postImportFollowingQueue()

@@ -3,7 +3,7 @@ package samoyed.core.usecase.scheduled_artist_album_detail_fetch.step
 import com.google.inject.{Inject, Singleton}
 import monix.eval.Task
 import samoyed.core.lib.date.DateTimeFormat
-import samoyed.core.lib.db.TransactionTask
+import samoyed.core.lib.db.Transaction
 import samoyed.core.model.db.{ArtistAlbum, ArtistAlbumDetail, ArtistAlbumDetailFetchSchedule}
 import samoyed.logging.Logger
 import scalikejdbc.*
@@ -15,7 +15,7 @@ import scala.util.control.Exception.allCatch
 
 @Singleton
 private[scheduled_artist_album_detail_fetch] class SaveArtistAlbumDetailStep @Inject() (
-    tx: TransactionTask
+    tx: Transaction
 ) extends Logger {
   private val dtParser = (s: String) => allCatch.either(LocalDate.parse(s, DateTimeFormat.ymd))
 
@@ -48,27 +48,29 @@ private[scheduled_artist_album_detail_fetch] class SaveArtistAlbumDetailStep @In
       )
     }
 
-    tx.write { implicit session =>
-      val column = ArtistAlbumDetail.column
-      val builder = BatchParamsBuilder {
-        details.map { detail =>
-          Seq(
-            column.artistAlbumId -> detail.artistAlbumId,
-            column.albumName -> detail.albumName,
-            column.releaseDate -> detail.releaseDate,
-            column.releaseDateType -> detail.releaseDateType,
-            column.label -> detail.label,
-            column.createdAt -> detail.createdAt,
-            column.updatedAt -> detail.updatedAt,
-            column.deletedAt -> detail.deletedAt
-          )
+    Task {
+      tx.write { implicit session =>
+        val column = ArtistAlbumDetail.column
+        val builder = BatchParamsBuilder {
+          details.map { detail =>
+            Seq(
+              column.artistAlbumId -> detail.artistAlbumId,
+              column.albumName -> detail.albumName,
+              column.releaseDate -> detail.releaseDate,
+              column.releaseDateType -> detail.releaseDateType,
+              column.label -> detail.label,
+              column.createdAt -> detail.createdAt,
+              column.updatedAt -> detail.updatedAt,
+              column.deletedAt -> detail.deletedAt
+            )
+          }
         }
-      }
-      withSQL {
-        insertInto(ArtistAlbumDetail).namedValues(builder.columnsAndPlaceholders*)
-      }.batch(builder.batchParams*).apply()
+        withSQL {
+          insertInto(ArtistAlbumDetail).namedValues(builder.columnsAndPlaceholders*)
+        }.batch(builder.batchParams*).apply()
 
-      logger.info("Saved artist album details ()", kv("count", details.size))
+        logger.info("Saved artist album details ()", kv("count", details.size))
+      }
     }
   }
 }

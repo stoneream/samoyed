@@ -2,7 +2,7 @@ package samoyed.core.usecase.scheduled_artist_album_detail_fetch.step
 
 import com.google.inject.{Inject, Singleton}
 import monix.eval.Task
-import samoyed.core.lib.db.TransactionTask
+import samoyed.core.lib.db.Transaction
 import samoyed.core.model.db.{ArtistAlbum, ArtistAlbumDetailFetchSchedule}
 import samoyed.logging.Logger
 import scalikejdbc.*
@@ -11,7 +11,7 @@ import java.time.OffsetDateTime
 
 @Singleton
 private[scheduled_artist_album_detail_fetch] class GetScheduleStep @Inject() (
-    tx: TransactionTask
+    tx: Transaction
 ) extends Logger {
   private val aa = ArtistAlbum.syntax("aad")
   private val aadfs = ArtistAlbumDetailFetchSchedule.syntax("aadfs")
@@ -19,7 +19,7 @@ private[scheduled_artist_album_detail_fetch] class GetScheduleStep @Inject() (
   /**
    * 未開始のスケジュールをn件取得し、開始状態に遷移
    */
-  def run(n: Int, now: OffsetDateTime): Task[List[(ArtistAlbumDetailFetchSchedule, ArtistAlbum)]] = {
+  def run(n: Int, now: OffsetDateTime): Task[List[(ArtistAlbumDetailFetchSchedule, ArtistAlbum)]] = Task {
     tx.readForWrite { implicit session =>
 
       // 未開始のスケジュールをn件取得
