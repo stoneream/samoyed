@@ -12,7 +12,7 @@ services:
       - ./db/migration:/flyway/sql
     command: >
       -url=jdbc:mariadb://db:3306
-      -schemas=dev_samoyed
+      -schemas=samoyed
       -connectRetries=60
       -user=root
       -password=

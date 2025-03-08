@@ -2,15 +2,15 @@
 # jdbc settings
 
 jdbc.driver=org.mariadb.jdbc.Driver
-jdbc.url=jdbc:mariadb://localhost:3306/
-jdbc.username=
+jdbc.url=jdbc:mariadb://localhost:43306/
+jdbc.username=root
 jdbc.password=
-jdbc.schema=
+jdbc.schema=samoyed
 
 # ---
 # source code generator settings
 
-generator.packageName=models
+generator.packageName=samoyed.core.model.db
 # generator.lineBreak: LF/CRLF
 generator.lineBreak=LF
 # generator.template: interpolation/queryDsl
@@ -18,11 +18,10 @@ generator.template=queryDsl
 # generator.testTemplate: specs2unit/specs2acceptance/ScalaTestFlatSpec
 generator.testTemplate=ScalaTestFlatSpec
 generator.encoding=UTF-8
-# When you're using Scala 2.11 or higher, you can use case classes for 22+ columns tables
-generator.caseClassOnly=true
 # Set AutoSession for implicit DBSession parameter's default value
-generator.defaultAutoSession=true
+generator.defaultAutoSession=false
 # Use autoConstruct macro (default: false)
-generator.autoConstruct=false
+generator.autoConstruct=true
 # joda-time (org.joda.time.DateTime) or JSR-310 (java.time.ZonedDateTime java.time.OffsetDateTime java.time.LocalDateTime)
 generator.dateTimeClass=java.time.OffsetDateTime
+

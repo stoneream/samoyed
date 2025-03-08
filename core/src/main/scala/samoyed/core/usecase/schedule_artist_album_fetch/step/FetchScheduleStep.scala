@@ -19,7 +19,7 @@ private[schedule_artist_album_fetch] class FetchScheduleStep @Inject() (
    * @param now
    * @return
    */
-  def run(now: OffsetDateTime): Task[List[ArtistAlbumFetchSchedule]] = {
+  def run(now: OffsetDateTime): Task[List[ArtistAlbumFetchSchedule]] = Task {
     val start = now.withHour(0).withMinute(0).withSecond(0).withNano(0)
     val end = now.withHour(23).withMinute(59).withSecond(59).withNano(999999999)
 

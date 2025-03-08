@@ -15,18 +15,18 @@ object GeneratedCode extends Logger {
     val file = File(gc.path)
 
     if (file.exists()) {
-      warn(s"${gc.path} already exists")
-      info("Do you want to overwrite it? [y/n]")
+      logger.warn(s"${gc.path} already exists")
+      logger.info("Do you want to overwrite it? [y/n]")
 
       if (StdIn.readLine() == "y") {
         file.writeText(gc.content)
-        info(s"Generated ${gc.path}")
+        logger.info(s"Generated ${gc.path}")
       } else {
-        info(s"Skipped ${gc.path}")
+        logger.info(s"Skipped ${gc.path}")
       }
     } else {
       file.createFileIfNotExists(createParents = true).writeText(gc.content)
-      info(s"Generated ${gc.path}")
+      logger.info(s"Generated ${gc.path}")
     }
   }
 }

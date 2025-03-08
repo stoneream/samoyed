@@ -16,7 +16,7 @@ private[schedule_artist_album_fetch] class FetchArtistStep @Inject() (
    * 巡回対象のアーティストを洗い出す
    * @return
    */
-  def run(): Task[List[Artist]] = {
+  def run(): Task[List[Artist]] = Task {
     tx.read { implicit session =>
       withSQL {
         select

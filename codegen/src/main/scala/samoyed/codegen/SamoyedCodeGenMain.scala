@@ -27,7 +27,7 @@ object SamoyedCodeGenMain extends Logger {
 
     OParser.parse(parser, args, CommandArgs()) match {
       case Some(config) =>
-        info(s"$config")
+        logger.info(s"$config")
 
         config.commandName match {
           case Some(commandName) => GenerateCommand.run(commandName)
@@ -45,7 +45,7 @@ object SamoyedCodeGenMain extends Logger {
         }
 
       case _ =>
-        error("Failed to parse command line arguments")
+        logger.error("Failed to parse command line arguments")
     }
   }
 

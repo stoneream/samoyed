@@ -2,7 +2,6 @@ package samoyed.core.usecase.import_followed_artist
 
 import com.google.inject.{Inject, Singleton}
 import monix.eval.Task
-import net.logstash.logback.argument.StructuredArguments.kv
 import samoyed.core.lib.spotify.SpotifyApiErrorHandler.retryTooManyRequests
 import samoyed.core.model.config.SpotifyConfig
 import samoyed.core.model.db.Artist
@@ -34,28 +33,29 @@ class ImportFollowedArtist @Inject() (
 
     // フォロー中のアーティストを取得
     val spotifyArtists = fetch(client)
-    info(s"Fetched ${spotifyArtists.size} followed artists")
+    logger.info(s"Fetched ${spotifyArtists.size} followed artists")
 
     val a = Artist.syntax("a")
     val column = Artist.column
 
     for {
-      // すでに登録されているアーティストを除外するため検索
-      stored <- {
-        val spotifyArtistIds = spotifyArtists.map(_.getId)
-        tx.read { implicit s =>
-          withSQL {
-            select
-              .from(Artist as a)
-              .where
-              .eq(a.deletedAt, None)
-              .and
-              .in(a.spotifyArtistId, spotifyArtistIds)
-          }.map(Artist(a.resultName)).list.apply()
-        }
-      }
       // 既存のアーティストを除外
       newArtists <- Task {
+        // すでに登録されているアーティストを除外するため検索
+        val stored = {
+          val spotifyArtistIds = spotifyArtists.map(_.getId)
+          tx.read { implicit s =>
+            withSQL {
+              select
+                .from(Artist as a)
+                .where
+                .eq(a.deletedAt, None)
+                .and
+                .in(a.spotifyArtistId, spotifyArtistIds)
+            }.map(Artist(a.resultName)).list.apply()
+          }
+        }
+
         spotifyArtists.filterNot { artist =>
           stored.exists(_.spotifyArtistId == artist.getId)
         }
@@ -73,13 +73,15 @@ class ImportFollowedArtist @Inject() (
           }
         }
       }
-      _ <- tx.write { implicit s =>
-        withSQL {
-          insert.into(Artist).namedValues(builder.columnsAndPlaceholders*)
-        }.batch(builder.batchParams*).apply()
+      _ <- Task {
+        tx.write { implicit s =>
+          withSQL {
+            insert.into(Artist).namedValues(builder.columnsAndPlaceholders*)
+          }.batch(builder.batchParams*).apply()
+        }
       }
       _ = {
-        info(s"Stored ${newArtists.size} artists")
+        logger.info(s"Stored ${newArtists.size} artists")
       }
     } yield ImportFollowedArtistOutput()
   }
@@ -103,12 +105,12 @@ class ImportFollowedArtist @Inject() (
 
       result.getCursors.toList match {
         case Nil =>
-          warn("Failed get cursor")
+          logger.warn("Failed get cursor")
           artists
         case cursor :: _ =>
           val after = cursor.getAfter
           val items = artists ++ result.getItems
-          info(
+          logger.info(
             s"Fetching followed artists",
             kv("progress", s"${items.size}/${result.getTotal}")
           )

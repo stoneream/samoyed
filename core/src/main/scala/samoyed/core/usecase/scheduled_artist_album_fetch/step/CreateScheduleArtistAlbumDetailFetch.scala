@@ -25,7 +25,7 @@ private[scheduled_artist_album_fetch] class CreateScheduleArtistAlbumDetailFetch
     } yield ()
   }
 
-  private def getNewArtistAlbum(newAlbums: List[AlbumSimplified]): Task[List[ArtistAlbum]] = {
+  private def getNewArtistAlbum(newAlbums: List[AlbumSimplified]): Task[List[ArtistAlbum]] = Task {
     tx.read { implicit session =>
       withSQL {
         select
@@ -54,7 +54,7 @@ private[scheduled_artist_album_fetch] class CreateScheduleArtistAlbumDetailFetch
     }
   }
 
-  private def insertAlbums(albums: List[ArtistAlbumDetailFetchSchedule]): Task[Unit] = {
+  private def insertAlbums(albums: List[ArtistAlbumDetailFetchSchedule]): Task[Unit] = Task {
     tx.write { implicit session =>
       val column = ArtistAlbumDetailFetchSchedule.column
       val builder = BatchParamsBuilder {

@@ -12,7 +12,7 @@ import java.time.OffsetDateTime
 private[scheduled_artist_album_detail_fetch] class FinishedScheduleStep @Inject() (tx: Transaction) {
   private val aadfs = ArtistAlbumDetailFetchSchedule.syntax("aadfs")
 
-  def run(artistAlbumFetchSchedules: List[ArtistAlbumDetailFetchSchedule], now: OffsetDateTime): Task[Int] = {
+  def run(artistAlbumFetchSchedules: List[ArtistAlbumDetailFetchSchedule], now: OffsetDateTime): Task[Int] = Task {
     tx.write { implicit session =>
       withSQL {
         update(ArtistAlbumDetailFetchSchedule as aadfs)

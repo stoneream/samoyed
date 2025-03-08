@@ -1,46 +1,50 @@
-import sbt._
+import sbt.*
 
 object Dependencies {
 
   lazy val core: Seq[ModuleID] = Seq(
+    guice,
     scalikejdbc,
     mariadbJavaClient,
+    sttp,
     hikariCP,
     spotify,
-    discordWebhooks,
+    discord,
     scalatest,
     typesafeConfig,
     pureConfig,
-    guice,
     monix
   ).flatten
 
   lazy val codegen: Seq[ModuleID] = Seq(
+    guice,
     scopt,
     betterFiles
   ).flatten
 
-  lazy val batch: Seq[ModuleID] = Seq(
-    scalikejdbc,
-    mariadbJavaClient,
-    scopt,
-    monix,
-    typesafeConfig
-  ).flatten
-
   lazy val daemon: Seq[ModuleID] = Seq(
+    guice,
     scopt,
     mariadbJavaClient,
-    guice,
     monix,
     typesafeConfig,
     pureConfig
   ).flatten
 
-  lazy val logging: Seq[ModuleID] = Seq(
-    logback,
-    logstashLogbackEncoder
+  lazy val bot: Seq[ModuleID] = Seq(
+    guice,
+    discord,
+    sttp
   ).flatten
+
+  lazy val scalatags: Seq[ModuleID] = Seq(
+    "com.lihaoyi" %% "scalatags" % "0.13.1"
+  )
+
+  lazy val logging: Seq[ModuleID] = Seq(
+    "ch.qos.logback" % "logback-classic" % "1.5.16",
+    "net.logstash.logback" % "logstash-logback-encoder" % "8.0"
+  )
 
   lazy val monix: Seq[ModuleID] = Seq(
     "io.monix" %% "monix" % "3.4.1"
@@ -52,27 +56,20 @@ object Dependencies {
   )
 
   lazy val mariadbJavaClient: Seq[ModuleID] = Seq(
-    "org.mariadb.jdbc" % "mariadb-java-client" % "3.4.1" excludeAll ExclusionRule("org.slf4j", "jcl-over-slf4j") // 依存がぶつかるので除外
+    "org.mariadb.jdbc" % "mariadb-java-client" % "3.5.2"
   )
 
   lazy val hikariCP: Seq[ModuleID] = Seq(
-    "com.zaxxer" % "HikariCP" % "6.0.0"
+    "com.zaxxer" % "HikariCP" % "6.2.1"
   )
 
   lazy val spotify: Seq[ModuleID] = Seq(
-    "se.michaelthelin.spotify" % "spotify-web-api-java" % "8.4.0"
+    "se.michaelthelin.spotify" % "spotify-web-api-java" % "9.1.1"
   )
 
-  lazy val discordWebhooks: Seq[ModuleID] = Seq(
+  lazy val discord: Seq[ModuleID] = Seq(
+    "net.dv8tion" % "JDA" % "5.3.0",
     "club.minnced" % "discord-webhooks" % "0.8.4" excludeAll ExclusionRule("org.slf4j", "jcl-over-slf4j") // 依存がぶつかるので除外
-  )
-
-  lazy val logback: Seq[ModuleID] = Seq(
-    "ch.qos.logback" % "logback-classic" % "1.5.8"
-  )
-
-  lazy val logstashLogbackEncoder: Seq[ModuleID] = Seq(
-    "net.logstash.logback" % "logstash-logback-encoder" % "8.0"
   )
 
   lazy val typesafeConfig: Seq[ModuleID] = Seq(
@@ -94,6 +91,23 @@ object Dependencies {
 
   lazy val guice: Seq[ModuleID] = Seq(
     "com.google.inject" % "guice" % "7.0.0"
+  )
+
+  lazy val circe: Seq[ModuleID] = Seq(
+    "io.circe" %% "circe-core" % "0.14.10",
+    "io.circe" %% "circe-generic" % "0.14.10",
+    "io.circe" %% "circe-parser" % "0.14.10",
+    "io.circe" %% "circe-optics" % "0.15.0"
+  )
+  lazy val sttp: Seq[ModuleID] = Seq(
+    "com.softwaremill.sttp.client3" %% "core" % "3.10.3",
+    "com.softwaremill.sttp.client3" %% "circe" % "3.10.3",
+    "com.softwaremill.sttp.client3" %% "okhttp-backend" % "3.10.3",
+    "com.squareup.okhttp3" % "okhttp" % "4.12.0"
+  )
+
+  lazy val play: Seq[ModuleID] = Seq(
+    "org.scalatestplus.play" %% "scalatestplus-play" % "7.0.1" % Test
   )
 
   // testing

@@ -6,7 +6,6 @@ import monix.execution.Cancelable
 import samoyed.core.usecase.scheduled_artist_album_detail_fetch.step.*
 import samoyed.logging.Logger
 import monix.execution.Scheduler.Implicits.traced
-import net.logstash.logback.argument.StructuredArguments.kv
 
 import java.time.OffsetDateTime
 
@@ -43,7 +42,7 @@ class ScheduledArtistAlbumDetailFetch @Inject() (
 
     task.runAsync {
       case Right(_) => // do nothing
-      case Left(e) => error("Failed to fetch artist album detail", e)
+      case Left(e) => logger.error("Failed to fetch artist album detail", e)
     }
   }
 }

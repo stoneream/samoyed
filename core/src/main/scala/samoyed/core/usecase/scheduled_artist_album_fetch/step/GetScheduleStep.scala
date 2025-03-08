@@ -2,7 +2,6 @@ package samoyed.core.usecase.scheduled_artist_album_fetch.step
 
 import com.google.inject.{Inject, Singleton}
 import monix.eval.Task
-import net.logstash.logback.argument.StructuredArguments.kv
 import samoyed.core.lib.db.Transaction
 import samoyed.core.model.db.{Artist, ArtistAlbumFetchSchedule}
 import samoyed.logging.Logger
@@ -20,7 +19,7 @@ private[scheduled_artist_album_fetch] class GetScheduleStep @Inject() (
   /**
    * 未開始のスケジュールをn件取得し、開始状態に遷移
    */
-  def run(n: Int, now: OffsetDateTime): Task[List[(ArtistAlbumFetchSchedule, Artist)]] = {
+  def run(n: Int, now: OffsetDateTime): Task[List[(ArtistAlbumFetchSchedule, Artist)]] = Task {
     tx.readForWrite { implicit session =>
       // 未開始のスケジュールをn件取得
       val schedulesWithArtist = withSQL {
@@ -51,7 +50,7 @@ private[scheduled_artist_album_fetch] class GetScheduleStep @Inject() (
         (updatedSchedule, artist)
       }
 
-      info("Found schedules ({})", kv("count", updatedSchedulesWithArtist.size))
+      logger.info("Found schedules ({})", kv("count", updatedSchedulesWithArtist.size))
 
       // 開始状態に遷移したスケジュールを更新
       val scheduleIds = schedulesWithArtist.map { case (schedule, artist) => schedule.id }

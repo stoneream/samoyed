@@ -42,13 +42,14 @@ lazy val root = (project in file("."))
     name := "samoyed"
   )
   .settings(baseSettings *)
-  .aggregate(core, codegen, batch, daemon, logging)
+  .aggregate(core, codegen, daemon, logging)
 
 lazy val core = (project in file("core"))
   .settings(
     name := "samoyed-core",
     libraryDependencies ++= Dependencies.core
   )
+  .enablePlugins(ScalikejdbcPlugin)
   .settings(baseSettings *)
   .dependsOn(logging)
 
@@ -60,21 +61,20 @@ lazy val codegen = (project in file("codegen"))
   .settings(baseSettings *)
   .dependsOn(logging)
 
-lazy val batch = (project in file("batch"))
-  .settings(
-    name := "samoyed-batch",
-    libraryDependencies ++= Dependencies.batch,
-    assembly / mainClass := Some("samoyed.batch.SamoyedBatchMain")
-  )
-  .settings(baseSettings *)
-  .dependsOn(core)
-  .dependsOn(logging)
-
 lazy val daemon = (project in file("daemon"))
   .settings(
     name := "samoyed-daemon",
     libraryDependencies ++= Dependencies.daemon,
     assembly / mainClass := Some("samoyed.daemon.SamoyedDaemonMain")
+  )
+  .settings(baseSettings *)
+  .dependsOn(core)
+  .dependsOn(logging)
+
+lazy val bot = (project in file("bot"))
+  .settings(
+    name := "samoyed-bot",
+    libraryDependencies ++= Dependencies.bot
   )
   .settings(baseSettings *)
   .dependsOn(core)

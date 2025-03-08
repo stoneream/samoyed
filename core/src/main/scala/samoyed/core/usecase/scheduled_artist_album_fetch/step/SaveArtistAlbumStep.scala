@@ -32,12 +32,13 @@ private[scheduled_artist_album_fetch] class SaveArtistAlbumStep @Inject() (
         spotifyAlbumId = album.getId,
         createdAt = now,
         updatedAt = now,
-        deletedAt = None
+        deletedAt = None,
+        lockVersion = 0
       )
     }
   }
 
-  private def insertAlbums(albums: List[ArtistAlbum]): Task[Unit] = {
+  private def insertAlbums(albums: List[ArtistAlbum]): Task[Unit] = Task {
     tx.write { implicit session =>
       val column = ArtistAlbum.column
       val builder = BatchParamsBuilder {

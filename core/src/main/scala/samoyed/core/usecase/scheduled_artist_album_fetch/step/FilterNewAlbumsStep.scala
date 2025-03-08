@@ -27,7 +27,7 @@ private[scheduled_artist_album_fetch] class FilterNewAlbumsStep @Inject() (
     } yield (artist, newAlbums)
   }
 
-  private def getRegisteredAlbums(artist: Artist): Task[List[ArtistAlbum]] = {
+  private def getRegisteredAlbums(artist: Artist): Task[List[ArtistAlbum]] = Task {
     tx.read { implicit session =>
       withSQL {
         select
