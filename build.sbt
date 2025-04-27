@@ -42,7 +42,15 @@ lazy val root = (project in file("."))
     name := "samoyed"
   )
   .settings(baseSettings *)
-  .aggregate(core, codegen, batch, daemon, logging)
+  .aggregate(core, codegen, batch, daemon, database, logging)
+
+lazy val database = (project in file("database"))
+  .settings(baseSettings *)
+  .settings(
+    name := "database",
+    libraryDependencies ++= Dependencies.database
+  )
+  .enablePlugins(ScalikejdbcPlugin)
 
 lazy val core = (project in file("core"))
   .settings(

@@ -42,6 +42,12 @@ object Dependencies {
     logstashLogbackEncoder
   ).flatten
 
+  lazy val database: Seq[ModuleID] = Seq(
+    scalikejdbc,
+    mariadbJavaClient,
+    hikariCP
+  ).flatten
+
   lazy val monix: Seq[ModuleID] = Seq(
     "io.monix" %% "monix" % "3.4.1"
   )
@@ -52,7 +58,7 @@ object Dependencies {
   )
 
   lazy val mariadbJavaClient: Seq[ModuleID] = Seq(
-    "org.mariadb.jdbc" % "mariadb-java-client" % "3.4.1" excludeAll ExclusionRule("org.slf4j", "jcl-over-slf4j") // 依存がぶつかるので除外
+    "org.mariadb.jdbc" % "mariadb-java-client" % "3.5.3" excludeAll ExclusionRule("org.slf4j", "jcl-over-slf4j") // 依存がぶつかるので除外
   )
 
   lazy val hikariCP: Seq[ModuleID] = Seq(
