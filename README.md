@@ -1,6 +1,10 @@
 # SAMOYED
 
-Spotify 新着リリースを巡回 & 通知くん
+Spotify 新着リリースを巡回 & 通知くん  
+
+**現在、このリポジトリはメンテナンスが止まっており、後継プロジェクトは以下のリポジトリです。**  
+
+**https://github.com/stoneream/dachshund**
 
 ## インストール方法
 
